@@ -225,53 +225,27 @@
       ewc:['EWC','保护重要参数','Parameter importance'],
       lwf:['LwF','保留旧模型的响应','Knowledge distillation'],
       icarl:['iCaRL','保留代表样本','Exemplar memory'],
-      overview:['MY RESEARCH WORK','我把论文流程与关键机制重新做成交互式网页。','阅读 → 理解 → 重构 → 交互解释'],
+      overview:['MY RESEARCH WORK','我把论文流程与关键机制重新做成交互式网页。','持续学习 · 交互式学习作品'],
     }[camera];
-    return '<section class="scene scene-paper" data-camera="overview" data-target-camera="' + camera + '">' +
-      '<div class="paper-title"><span>RESEARCH WORKSPACE</span><strong>' + info[0] + '</strong></div>' +
-      '<div class="paper-caption"><strong>' + info[1] + '</strong><span>' + info[2] + '</span></div>' +
-      '<div class="paper-camera"><div class="paper-world">' +
-      '<div class="paper-node paper-node-ewc"><img src="assets/ewc.png" alt="EWC 持续学习可视化实验室页面，重点展示运行视图与数学视图"></div>' +
-      '<div class="paper-node paper-node-lwf"><img src="assets/lwf.png" alt="LwF 交互式论文解释页面，重点展示 Teacher、Student 与联合损失"></div>' +
-      '<div class="paper-node paper-node-icarl"><img src="assets/icarl.png" alt="iCaRL 交互式论文解释页面，重点展示 exemplar 列表与 herding 选择"></div>' +
-      '</div></div>' +
-      (camera==='overview'?'<div class="paper-process"><span>阅读</span><i>→</i><span>理解</span><i>→</i><span>重构</span><i>→</i><span>交互解释</span><small>学习路径：LwF · EWC · iCaRL · GEM · …</small></div>':'') +
+    const assets = {
+      ewc:{src:'assets/ewc.png',width:1896,height:1078,alt:'EWC 持续学习可视化实验室页面，展示运行视图与数学视图'},
+      lwf:{src:'assets/lwf.png',width:1885,height:852,alt:'LwF 交互式论文解释页面，展示 Teacher、Student 与联合损失'},
+      icarl:{src:'assets/icarl.png',width:1915,height:1079,alt:'iCaRL 交互式论文解释页面，展示 exemplar 列表与 herding 选择'},
+    };
+    const paperIds = camera === 'overview' ? ['ewc','lwf','icarl'] : [camera];
+    const images = paperIds.map((id) => {
+      const asset = assets[id];
+      return '<figure class="paper-node paper-node-' + id + '"><img src="' + asset.src + '" width="' + asset.width + '" height="' + asset.height + '" alt="' + asset.alt + '" loading="eager" decoding="sync"></figure>';
+    }).join('');
+    return '<section class="scene scene-paper" data-camera="' + camera + '">' +
+      '<header class="paper-heading"><div class="paper-title"><span>RESEARCH WORKSPACE</span><strong>' + info[0] + '</strong></div>' +
+      '<div class="paper-caption"><strong>' + info[1] + '</strong><span>' + info[2] + '</span></div></header>' +
+      '<div class="paper-camera"><div class="paper-world' + (camera === 'overview' ? ' is-overview' : '') + '">' + images + '</div></div>' +
+      (camera==='overview'?'<footer class="paper-process"><div><span>阅读</span><i>→</i><span>理解</span><i>→</i><span>重构</span><i>→</i><span>交互解释</span></div><small>学习路径：LwF · EWC · iCaRL · GEM · …</small></footer>':'') +
       '</section>';
   }
   function sceneAdaptation() {
     return '<section class="scene scene-adaptation"><div class="adaptation-axes"><span class="axis-y-label">DIFFERENT PEOPLE</span><span class="axis-x-label">CHANGING TASKS / DATA <b>→</b></span><span class="axis-person-label axis-person-a">USER A</span><span class="axis-person-label axis-person-b">USER B</span><span class="axis-person-label axis-person-c">USER C</span><span class="axis-stream axis-stream-a"></span><span class="axis-stream axis-stream-b"></span><div class="axis-core"><strong>ADAPTATION</strong><small>Adapt over time × Adapt across people</small></div></div><div class="adaptation-summary"><p class="scene-kicker">ONE QUESTION · TWO DIRECTIONS</p><h2>适应变化，<br>也适应不同的人。</h2><p>持续学习关注跨时间与任务的适应；个性化关注不同个体。两者共同指向智能系统如何在长期使用中持续调整。</p><div class="adaptation-equation"><strong>CONTINUAL LEARNING</strong> · Adapt over time<br><strong>PERSONALIZATION</strong> · Adapt across people</div></div></section>';
-  }
-
-  function positionPaperCamera(scene, camera) {
-    const viewport = scene.querySelector('.paper-camera');
-    const world = scene.querySelector('.paper-world');
-    const nodes = [...scene.querySelectorAll('.paper-node')];
-    if (!viewport || !world || !nodes.length || !viewport.clientWidth || !viewport.clientHeight) return;
-    let bounds;
-    if (camera === 'overview') {
-      const left = Math.min(...nodes.map((node) => node.offsetLeft));
-      const top = Math.min(...nodes.map((node) => node.offsetTop));
-      const right = Math.max(...nodes.map((node) => node.offsetLeft + node.offsetWidth));
-      const bottom = Math.max(...nodes.map((node) => node.offsetTop + node.offsetHeight));
-      bounds = {left,top,width:right-left,height:bottom-top};
-    } else {
-      const node = scene.querySelector('.paper-node-' + camera);
-      if (!node) return;
-      bounds = {left:node.offsetLeft,top:node.offsetTop,width:node.offsetWidth,height:node.offsetHeight};
-    }
-    const scale = Math.min(viewport.clientWidth*.9/bounds.width,viewport.clientHeight*.86/bounds.height);
-    const tx = (viewport.clientWidth - bounds.width*scale)/2 - bounds.left*scale;
-    const ty = (viewport.clientHeight - bounds.height*scale)/2 - bounds.top*scale;
-    world.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
-    scene.dataset.camera = camera;
-  }
-
-  function initializePaperCamera(scene) {
-    const camera = scene.dataset.targetCamera || 'overview';
-    const images = [...scene.querySelectorAll('.paper-node img')];
-    Promise.all(images.map((image) => image.decode().catch(() => undefined))).then(() => {
-      if (scene.isConnected) positionPaperCamera(scene,camera);
-    });
   }
 
   const scenes = [
@@ -384,8 +358,6 @@
     currentIndex = Math.max(0,Math.min(scenes.length-1,index));
     const scene = scenes[currentIndex];
     container.innerHTML = scene.render();
-    const paperScene = container.querySelector('.scene-paper');
-    if (paperScene) requestAnimationFrame(() => initializePaperCamera(paperScene));
     indexNode.textContent = String(currentIndex+1).padStart(2,'0');
     bar.style.width = ((currentIndex+1)/scenes.length*100) + '%';
     previous.disabled = currentIndex === 0;
