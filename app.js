@@ -220,27 +220,27 @@
     return '<section class="scene scene-research-intro"><div class="research-intro-transition"><span>LEARN</span><i>→</i><strong>LEARN OVER TIME</strong></div><p class="scene-kicker">03 — RESEARCHING / CONTINUAL LEARNING</p><h1 class="scene-title">如果任务一直变化，<br><em>模型还能一直学下去吗？</em></h1><p class="scene-lead">MentalFlow 的学习回路让我开始追问：任务持续变化时，模型怎样学会新的，同时尽量保留旧能力？</p></section>';
   }
   function parameterCells(state, limit) {
+    const updatesOnTaskB = new Set([0,3,4,6,9,11,13,16,18,19,22,24,27,29,31,32,35,37,40,42,44,47]);
     const tones = {
       initial:[1,2,1,3,2,1,2,1,3,1,2,2,1,3,1,2,2,1,2,3,1,2,1,3,2,1,3,2,1,2,2,3,1,2,3,1,2,1,2,3,1,3,2,1,3,2,1,2],
       taskA:[2,3,2,3,2,2,3,1,3,2,2,3,2,3,2,2,3,2,2,3,1,2,2,3,3,2,3,2,2,3,2,3,2,3,3,2,2,2,3,3,2,3,2,2,3,3,2,3],
       taskB:[3,2,3,1,3,2,3,2,2,3,2,3,3,1,3,2,3,2,3,2,3,1,2,3,2,3,2,3,1,3,3,2,3,2,1,3,3,2,3,1,2,3,3,2,1,3,2,3],
     }[state];
-    return tones.slice(0,limit || tones.length).map((tone,index) => '<i class="field-cell field-wave-' + (1+(index%6)) + ' tone-' + tone + '" aria-hidden="true"></i>').join('');
+    return tones.slice(0,limit || tones.length).map((tone,index) => '<i class="field-cell field-wave-' + (1+(index%6)) + ' tone-' + tone + (state === 'initial' && updatesOnTaskB.has(index) ? ' b-update-cell' : '') + '" aria-hidden="true"></i>').join('');
   }
   function taskSamples(kind) {
     const symbols = kind === 'task-a' ? ['○','△','○','△','△','○','△','○'] : ['□','◇','□','◇','◇','□','◇','□'];
     return symbols.map((symbol,index) => '<i>' + symbol + '</i>').join('');
   }
   function sceneCLForgetting() {
-    return '<section class="scene cl-scene cl-forgetting"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / LEARNING DYNAMICS</p><h2>任务一个接一个，<em>同一个模型持续更新。</em></h2><p>先学习旧任务 A，再继续学习新任务 B。训练过程会改变模型内部状态，也会影响它已经学会的内容。</p></div></header>' +
-      '<div class="cl-dynamics-stage" data-cl-dynamics><div class="cl-task-stream"><span class="board-label">任务流 · 按时间到来</span>' +
-      '<article class="task-tray task-a-tray"><header><strong>旧任务 A</strong><small>先学习</small></header><div class="sample-tray task-a-samples">' + taskSamples('task-a') + '</div><span class="sample-caption">概念样本</span></article>' +
-      '<article class="task-tray task-b-tray"><header><strong>新任务 B</strong><small>随后到来</small></header><div class="sample-tray task-b-samples">' + taskSamples('task-b') + '</div><span class="sample-caption">另一组概念样本</span></article>' +
-      '<article class="task-tray task-c-tray"><header><strong>后续任务 C</strong><small>继续到来</small></header><div class="sample-tray task-c-samples"><i>＋</i><i>＋</i><i>＋</i><i>＋</i></div></article></div>' +
+    return '<section class="scene cl-scene cl-forgetting"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / LEARNING DYNAMICS</p><h2>同一个模型，继续学习新的任务。</h2><p>先学习 Task A，再继续学习 Task B。新任务训练会继续修改同一个模型，我们同时观察新旧任务的表现怎样变化。</p></div></header>' +
+      '<div class="cl-dynamics-stage is-task-a" data-cl-dynamics><div class="cl-task-stream"><span class="board-label">任务流 · 按时间到来</span>' +
+      '<article class="task-tray task-a-tray"><header><strong>TASK A DATA</strong><small>先学习</small></header><div class="sample-tray task-a-samples" aria-label="Task A 概念示意样本">' + taskSamples('task-a') + '</div><span class="sample-caption">示意数据 · conceptual samples</span></article>' +
+      '<article class="task-tray task-b-tray"><header><strong>TASK B DATA</strong><small>随后到来</small></header><div class="sample-tray task-b-samples" aria-label="Task B 概念示意样本">' + taskSamples('task-b') + '</div><span class="sample-caption">示意数据 · conceptual samples</span></article></div>' +
       '<div class="cl-learning-path" aria-hidden="true"><span class="sample-batch batch-a batch-a-one">○ △ ○ △</span><span class="sample-batch batch-a batch-a-two">△ ○ △ ○</span><span class="sample-batch batch-b batch-b-one">□ ◇ □ ◇</span><span class="sample-batch batch-b batch-b-two">◇ □ ◇ □</span><i>→</i></div>' +
-      '<section class="cl-model-workspace"><header class="cl-model-heading"><div><span>MODEL</span><strong>θ</strong></div><small>一个模型，持续更新参数</small></header><div class="parameter-stack"><div class="parameter-field parameter-field-ghost" aria-hidden="true">' + parameterCells('taskA') + '</div><div class="parameter-field parameter-field-current is-a-updating" aria-label="模型参数状态示意">' + parameterCells('initial') + '</div><span class="theta-a-label">after Task A · θ_A</span></div><div class="parameter-meta"><span class="model-state-caption">参数状态 · 概念示意</span><span class="same-model-tag">SAME MODEL</span></div></section>' +
-      '<aside class="cl-performance"><span class="board-label">任务表现 · 定性示意</span><div class="performance-row old-task"><b>旧任务 A</b><div class="performance-track"><i></i></div></div><div class="performance-row new-task"><b>新任务 B</b><div class="performance-track"><i></i></div></div><div class="performance-key"><span>较低</span><span>较高</span></div><div class="forgetting-reveal"><strong>学会新的，<br>却把旧的忘了。</strong><span>灾难性遗忘</span><small>Catastrophic Forgetting</small></div></aside></div>' +
-      '<div class="cl-footline"><span>抽象参数与表现仅用于说明训练过程</span><span>Task A → 同一个 θ → Task B</span></div></section>';
+      '<section class="cl-model-workspace"><header class="cl-model-heading"><div><span>MODEL</span><strong>θ</strong></div><small>同一个模型，持续更新参数</small></header><div class="parameter-states"><div class="parameter-stack"><div class="parameter-field parameter-field-current" aria-label="模型参数状态示意">' + parameterCells('initial') + '</div></div><aside class="theta-a-snapshot" aria-label="Task A 学完后的模型参数快照"><strong>Task A 后</strong><span>θ_A 快照</span><div class="parameter-field snapshot-field" aria-hidden="true">' + parameterCells('taskA',24) + '</div></aside></div><div class="parameter-meta"><span class="model-state-caption">参数状态 · 概念示意</span><span class="same-model-tag">SAME MODEL</span></div></section>' +
+      '<aside class="cl-performance"><span class="board-label">同一个模型在两个任务上的表现</span><small class="performance-qualifier">qualitative performance</small><div class="performance-row old-task"><b>Task A</b><div class="performance-track"><i></i></div></div><div class="performance-row new-task"><b>Task B</b><div class="performance-track"><i></i></div></div><div class="performance-key"><span>较低</span><span>较高</span></div><div class="performance-delta" aria-hidden="true"><strong>A ↓</strong><strong>B ↑</strong></div><div class="forgetting-reveal"><strong>学会新的，旧任务表现却下降了。</strong><div class="forgetting-name"><span>灾难性遗忘</span><small>Catastrophic Forgetting</small></div></div></aside></div>' +
+      '<div class="cl-footline"><span>Conceptual visualization</span><span>A → same model θ → B</span></div></section>';
   }
   function sceneCLObjective() {
     const lane = (kind,title,english,oldWidth,newWidth) => '<article class="branch-lane branch-lane-' + kind + '"><header><div><strong>' + title + '</strong><small>' + english + '</small></div><span class="branch-model-tag">MODEL STATE</span></header><div class="branch-lane-content"><div class="branch-model-visual"><div class="parameter-field branch-parameter-mini" aria-hidden="true">' + parameterCells(kind === 'naive' ? 'taskB' : 'taskA',24) + '</div><span>更新后的参数状态 · 示意</span></div><div class="branch-metrics"><div class="branch-performance-row"><b>旧任务 A</b><div class="performance-track"><i style="--bar-width:' + oldWidth + '%"></i></div></div><div class="branch-performance-row"><b>新任务 B</b><div class="performance-track"><i style="--bar-width:' + newWidth + '%"></i></div></div></div></div></article>';
@@ -476,9 +476,19 @@
     if (scene.id === 'mental-feedback') requestAnimationFrame(flyEvidence);
     if (scene.id === 'cl-forgetting') {
       const dynamics = container.querySelector('[data-cl-dynamics]');
+      const schedule = (delay,className) => window.setTimeout(() => {
+        if (dynamics && dynamics.isConnected) dynamics.classList.add(className);
+      },delay);
+      schedule(1800,'is-task-a-learned');
+      schedule(2400,'is-snapshot');
+      schedule(3000,'is-task-b');
+      schedule(3400,'is-same-model');
+      schedule(5600,'is-conflict');
+      schedule(6350,'is-explained');
+      schedule(6900,'is-defined');
       window.setTimeout(() => {
-        if (dynamics && dynamics.isConnected) dynamics.classList.add('is-task-b');
-      }, 3200);
+        if (dynamics && dynamics.isConnected) dynamics.classList.remove('is-conflict');
+      },6320);
     }
     if (scene.id === 'cl-objective') {
       const branch = container.querySelector('[data-branch-flow]');
