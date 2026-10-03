@@ -246,6 +246,16 @@
       '<div class="branch-task-stream"><span>A</span><i>→</i><span>B</span><i>→</i><strong class="task-c-arrives">C</strong><i class="task-tail-arrives">→</i><span class="task-tail-arrives">D　E　…</span><small class="task-tail-arrives">TIME ─────────────────────→</small></div>' +
       '<div class="cl-footline"><span>两条路径均为定性示意，不表示方法优劣或实验结果</span><span>学习新任务，同时尽量保留旧能力</span></div></section>';
   }
+  function sceneStrategyBridge() {
+    const method = (id,principle,english,name,summary) => '<article class="method-bridge method-bridge-' + id + '"><div class="bridge-principle"><strong>' + principle + '</strong><small>' + english + '</small></div><span class="bridge-connector" aria-hidden="true">↓</span><div class="bridge-method"><strong>' + name + '</strong><span>' + summary + '</span></div></article>';
+    return '<section class="scene cl-scene strategy-bridge-scene"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / STRATEGY → PAPERS</p><h2>解决同一个问题，<em>可以从不同地方入手。</em></h2><p>学习新任务时，怎样尽量保留已经学到的内容？经典方法给出了几种不同思路。</p></div></header>' +
+      '<div class="strategy-bridge"><div class="strategy-bridge-context"><span class="strategy-context-label">持续学习的共同目标</span><div><strong>学新的</strong><i>＋</i><strong>尽量保留旧能力</strong></div><small>CONCEPTUAL STRATEGY MAP</small></div><div class="strategy-methods">' +
+      method('ewc','限制关键参数变化','REGULARIZATION','EWC','保护对旧任务重要的参数') +
+      method('lwf','保留旧模型的响应','DISTILLATION','LwF','继续参考旧模型给出的目标') +
+      method('icarl','保留少量代表样本','EXEMPLARS / REPLAY','iCaRL','用代表样本帮助保留旧类别') +
+      '</div><div class="strategy-bridge-caption"><span>三种思路，分别对应下面要看的代表工作</span><strong>EWC　→　LwF　→　iCaRL</strong></div></div>' +
+      '<div class="cl-footline"><span>策略示意 · 方法细节以各自论文页面为准</span><span>从问题出发，进入交互式论文工作区</span></div></section>';
+  }
   function scenePaper(camera) {
     const info = {
       ewc:['EWC','保护重要参数','Parameter importance'],
@@ -289,6 +299,7 @@
     { id:'research-intro', chapter:'RESEARCHING', render:sceneResearchIntro },
     { id:'cl-forgetting', chapter:'RESEARCHING', render:sceneCLForgetting },
     { id:'cl-objective', chapter:'RESEARCHING', render:sceneCLObjective },
+    { id:'strategy-bridge', chapter:'RESEARCHING', render:sceneStrategyBridge },
     { id:'paper-ewc', chapter:'RESEARCHING', render:() => scenePaper('ewc') },
     { id:'paper-lwf', chapter:'RESEARCHING', render:() => scenePaper('lwf') },
     { id:'paper-icarl', chapter:'RESEARCHING', render:() => scenePaper('icarl') },
