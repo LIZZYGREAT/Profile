@@ -292,6 +292,8 @@ button { color: inherit; font: inherit; }
 .paper-node-icarl { left: 74%; top: 0; z-index: 3; }
 .paper-camera-label { position: absolute; z-index: 5; top: 12px; left: 12px; padding: 6px 9px; border: 1px solid rgba(155,174,161,.64); background: rgba(249,250,246,.91); color: #718178; font: 10px var(--mono); letter-spacing: .1em; }
 .paper-node.is-selected { outline: 2px solid rgba(54,119,110,.52); outline-offset: 2px; }
+body.recording-mode .paper-camera-label { display: none; }
+body.recording-mode .paper-node.is-selected { outline: none; }
 .paper-process[hidden] { display: none; }
 .paper-process { display: flex; justify-content: space-between; align-items: center; gap: 15px; min-height: 40px; padding: 0 .7%; color: #6f8178; font-size: 16px; }
 .paper-process div { display: flex; align-items: center; gap: 14px; }

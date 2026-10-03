@@ -272,6 +272,26 @@
     icarl:{name:'iCaRL',headline:'保留代表样本',detail:'从旧类别中保留少量有代表性的 exemplar。'},
     overview:{name:'持续学习 · 论文理解与交互重构',headline:'为了检查自己是不是真的理解，我把论文里的训练流程、公式和关键机制重新做成交互式网页。',detail:'从 EWC、LwF、iCaRL 逐步形成理解。'},
   };
+  const paperShots = {
+    ewc:{
+      overview:{x:0,y:0,width:1,height:1},
+      shots:[
+        {key:'model',label:'SHARED MODEL',region:{x:.12,y:.13,width:.80,height:.74}},
+        {key:'constraint',label:'FISHER / EWC LOSS',region:{x:.20,y:.13,width:.80,height:.74}},
+      ],
+    },
+    lwf:{
+      overview:{x:0,y:0,width:1,height:1},
+      shots:[{key:'mechanism',label:'TEACHER · STUDENT · JOINT LOSS',region:{x:.04,y:0,width:.92,height:1}}],
+    },
+    icarl:{
+      overview:{x:0,y:0,width:1,height:1},
+      shots:[
+        {key:'exemplar',label:'EXEMPLAR LIST',region:{x:.05,y:.08,width:.90,height:.76}},
+        {key:'herding',label:'HERDING SELECTION',region:{x:.05,y:.16,width:.90,height:.76}},
+      ],
+    },
+  };
   function scenePaper() {
     const images = Object.keys(paperAssets).map((id) => {
       const asset = paperAssets[id];
@@ -319,7 +339,7 @@
   const next = document.getElementById('next-scene');
   let currentIndex = 0;
   let lastWheel = 0;
-  let paperFocusTimer = null;
+  let paperCameraRun = 0;
   if (new URLSearchParams(window.location.search).get('record') === '1') document.body.classList.add('recording-mode');
   totalNode.textContent = String(scenes.length).padStart(2,'0');
 
@@ -398,11 +418,11 @@
       animation.onfinish = () => { clone.remove(); complete(); };
     });
   }
-  function setPaperTransform(frame,world,nodeId,mode) {
+  function setPaperTransform(frame,world,nodeId,shotKey) {
     const frameWidth = frame.clientWidth, frameHeight = frame.clientHeight;
     if (!frameWidth || !frameHeight) return;
     const nodes = [...world.querySelectorAll('[data-paper-node]')];
-    if (mode === 'global') {
+    if (shotKey === 'global') {
       const bounds = nodes.reduce((box,node) => ({
         left:Math.min(box.left,node.offsetLeft), top:Math.min(box.top,node.offsetTop),
         right:Math.max(box.right,node.offsetLeft+node.offsetWidth), bottom:Math.max(box.bottom,node.offsetTop+node.offsetHeight),
@@ -414,18 +434,35 @@
     }
     const node = world.querySelector('[data-paper-node="' + nodeId + '"]');
     if (!node) return;
-    const focus = {
-      ewc:{x:.23,y:.25,width:.76,height:.55},
-      lwf:{x:.15,y:.08,width:.55,height:.75},
-      icarl:{x:.45,y:.2,width:.53,height:.66},
-    }[nodeId];
-    const region = mode === 'focus' ? focus : {x:0,y:0,width:1,height:1};
+    const shot = shotKey === 'overview'
+      ? {region:paperShots[nodeId].overview}
+      : paperShots[nodeId].shots.find((candidate) => candidate.key === shotKey);
+    if (!shot) return;
+    const region = shot.region;
     const scale = Math.min(frameWidth/(node.offsetWidth*region.width),frameHeight/(node.offsetHeight*region.height))*.94;
     const centerX = node.offsetLeft + (region.x+region.width/2)*node.offsetWidth;
     const centerY = node.offsetTop + (region.y+region.height/2)*node.offsetHeight;
     world.style.transform = 'translate3d(' + (frameWidth/2-centerX*scale) + 'px,' + (frameHeight/2-centerY*scale) + 'px,0) scale(' + scale + ')';
   }
-  function renderPaper(camera) {
+  function waitForPaperMotion(world) {
+    return new Promise((resolve) => {
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(fallback);
+        world.removeEventListener('transitionend',onEnd);
+        resolve();
+      };
+      const onEnd = (event) => {
+        if (event.target === world && event.propertyName === 'transform') finish();
+      };
+      const fallback = window.setTimeout(finish,1100);
+      world.addEventListener('transitionend',onEnd);
+    });
+  }
+  const wait = (duration) => new Promise((resolve) => window.setTimeout(resolve,duration));
+  function renderPaper(camera,run) {
     let workspace = container.querySelector('.scene-paper');
     const isNewWorkspace = !workspace;
     if (isNewWorkspace) {
@@ -445,28 +482,41 @@
     if (camera === 'overview') {
       frame.dataset.phase = 'global';
       workspace.querySelector('[data-paper-phase-label]').textContent = '三张页面 · 全局概览';
+      frame.dataset.shot = 'global';
       setPaperTransform(frame,world,'','global');
       return;
     }
     frame.dataset.phase = 'overview';
+    frame.dataset.shot = 'overview';
     workspace.querySelector('[data-paper-phase-label]').textContent = '整张页面 · OVERVIEW';
     setPaperTransform(frame,world,camera,'overview');
     if (isNewWorkspace) requestAnimationFrame(() => world.classList.remove('is-initial'));
     const targetScene = 'paper-' + camera;
-    paperFocusTimer = window.setTimeout(() => {
-      if (scenes[currentIndex]?.id !== targetScene || !workspace.isConnected) return;
-      frame.dataset.phase = 'focus';
-      workspace.querySelector('[data-paper-phase-label]').textContent = '机制焦点 · FOCUS';
-      const focusNode = world.querySelector('[data-paper-node="' + camera + '"]');
-      if (focusNode) focusNode.classList.add('is-selected');
-      setPaperTransform(frame,world,camera,'focus');
-    },600);
+    const isCurrent = () => paperCameraRun === run && scenes[currentIndex]?.id === targetScene && workspace.isConnected;
+    const showShots = async () => {
+      if (!isNewWorkspace) await waitForPaperMotion(world);
+      if (!isCurrent()) return;
+      await wait(500);
+      if (!isCurrent()) return;
+      for (let index=0;index<paperShots[camera].shots.length;index+=1) {
+        const shot = paperShots[camera].shots[index];
+        frame.dataset.phase = 'focus';
+        frame.dataset.shot = shot.key;
+        workspace.querySelector('[data-paper-phase-label]').textContent = shot.label;
+        world.querySelectorAll('[data-paper-node]').forEach((node) => node.classList.toggle('is-selected',node.dataset.paperNode === camera));
+        setPaperTransform(frame,world,camera,shot.key);
+        await waitForPaperMotion(world);
+        if (!isCurrent()) return;
+        if (index < paperShots[camera].shots.length-1) await wait(350);
+      }
+    };
+    showShots();
   }
   function render(index) {
-    window.clearTimeout(paperFocusTimer);
+    const run = ++paperCameraRun;
     currentIndex = Math.max(0,Math.min(scenes.length-1,index));
     const scene = scenes[currentIndex];
-    if (scene.id.startsWith('paper-')) renderPaper(scene.id === 'paper-overview' ? 'overview' : scene.id.slice('paper-'.length));
+    if (scene.id.startsWith('paper-')) renderPaper(scene.id === 'paper-overview' ? 'overview' : scene.id.slice('paper-'.length),run);
     else container.innerHTML = scene.render();
     indexNode.textContent = String(currentIndex+1).padStart(2,'0');
     bar.style.width = ((currentIndex+1)/scenes.length*100) + '%';
