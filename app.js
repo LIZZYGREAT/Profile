@@ -267,9 +267,9 @@
     icarl:{src:'assets/icarl.png',width:1915,height:1079,alt:'iCaRL 交互式论文解释页面，展示 exemplar 列表与 herding 选择'},
   };
   const paperCopy = {
-    ewc:{name:'EWC',headline:'保护重要参数',detail:'对旧任务更重要的参数，新任务训练时少改一点。'},
-    lwf:{name:'LwF',headline:'保留旧模型的响应',detail:'没有旧数据时，让旧模型继续提供旧任务目标。'},
-    icarl:{name:'iCaRL',headline:'保留代表样本',detail:'从旧类别中保留少量有代表性的 exemplar。'},
+    ewc:{name:'EWC',headline:'代表机制：保护重要参数',detail:'对旧任务更重要的参数，新任务训练时少改一点。'},
+    lwf:{name:'LwF',headline:'代表机制：保留旧模型的响应',detail:'没有旧数据时，继续参考旧模型的输出。'},
+    icarl:{name:'iCaRL',headline:'代表机制：保留少量代表样本',detail:'从旧类别中保留少量有代表性的 exemplar。'},
     overview:{name:'持续学习 · 论文理解与交互重构',headline:'为了检查自己是不是真的理解，我把论文里的训练流程、公式和关键机制重新做成交互式网页。',detail:'从 EWC、LwF、iCaRL 逐步形成理解。'},
   };
   const paperShots = {
@@ -297,10 +297,10 @@
       const asset = paperAssets[id];
       return '<figure class="paper-node paper-node-' + id + '" data-paper-node="' + id + '"><img src="' + asset.src + '" width="' + asset.width + '" height="' + asset.height + '" alt="' + asset.alt + '" loading="eager" decoding="async"></figure>';
     }).join('');
-    return '<section class="scene scene-paper" data-camera="ewc"><header class="paper-heading"><div class="paper-title"><span>RESEARCH WORKSPACE</span><strong data-paper-method></strong></div>' +
+    return '<section class="scene scene-paper" data-camera="ewc"><header class="paper-heading"><div class="paper-title"><div class="paper-title-main"><span>CONTINUAL LEARNING · STUDY WORK</span><strong data-paper-method></strong></div><div class="paper-study-path" aria-label="论文学习路径"><span class="paper-study-step" data-paper-step="ewc">EWC</span><i></i><span class="paper-study-step" data-paper-step="lwf">LwF</span><i></i><span class="paper-study-step" data-paper-step="icarl">iCaRL</span></div></div>' +
       '<div class="paper-caption"><strong data-paper-caption></strong><span data-paper-subcaption></span></div></header>' +
       '<div class="paper-camera" data-paper-camera data-phase="overview"><div class="paper-world" data-paper-world>' + images + '</div><span class="paper-camera-label" data-paper-phase-label>整张页面</span></div>' +
-      '<footer class="paper-process" data-paper-process hidden><div><span>阅读</span><i>→</i><span>理解</span><i>→</i><span>重构</span><i>→</i><span>交互解释</span></div><small>学习路径：LwF · EWC · iCaRL · GEM · …</small></footer></section>';
+      '<footer class="paper-process" data-paper-process hidden><div><span>阅读</span><i>→</i><span>理解</span><i>→</i><span>重构</span><i>→</i><span>交互解释</span></div><small>学习路径：EWC · LwF · iCaRL · GEM · …</small></footer></section>';
   }
   function miniTrajectory(className, anchors) {
     return '<svg class="axis-trajectory ' + className + '" viewBox="64 62 816 242" preserveAspectRatio="none" aria-hidden="true"><path d="' + smoothPath(pathPoints(anchors,24)) + '"></path></svg>';
@@ -473,6 +473,11 @@
     const frame = workspace.querySelector('[data-paper-camera]');
     const copy = paperCopy[camera];
     workspace.dataset.camera = camera;
+    const completedPaperIndex = ['ewc','lwf','icarl'].indexOf(camera);
+    workspace.querySelectorAll('[data-paper-step]').forEach((step,index) => {
+      step.classList.toggle('is-complete',camera === 'overview' || (completedPaperIndex >= 0 && index <= completedPaperIndex));
+      step.classList.toggle('is-current',step.dataset.paperStep === camera);
+    });
     workspace.querySelector('[data-paper-method]').textContent = copy.name;
     workspace.querySelector('[data-paper-caption]').textContent = copy.headline;
     workspace.querySelector('[data-paper-subcaption]').textContent = copy.detail;

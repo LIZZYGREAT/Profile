@@ -277,8 +277,16 @@ button { color: inherit; font: inherit; }
 /* Research paper images */
 .scene-paper { display: grid; grid-template-rows: auto minmax(0,1fr) auto; gap: clamp(12px,1.5vh,20px); justify-content: stretch; align-content: stretch; min-height: 0; padding: 0 1%; overflow: hidden; }
 .paper-heading { display: flex; justify-content: space-between; align-items: center; gap: 28px; min-height: 66px; padding: 0 .7%; }
-.paper-title { display: flex; align-items: center; gap: 16px; color: #849189; font: 14px var(--mono); letter-spacing: .12em; }
-.paper-title strong { color: var(--teal); font-size: 16px; font-weight: 500; }
+.paper-title { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; color: #849189; }
+.paper-title-main { display: flex; align-items: baseline; gap: 14px; font: 12px var(--mono); letter-spacing: .1em; }
+.paper-title-main strong { color: var(--teal); font-size: 15px; font-weight: 500; }
+.paper-study-path { display: flex; align-items: center; gap: 8px; color: #9aa59d; font: 10px var(--mono); letter-spacing: .06em; opacity: .78; }
+.paper-study-step { display: inline-flex; align-items: center; gap: 5px; transition: color .3s,opacity .3s; }
+.paper-study-step::before { content: ""; width: 6px; height: 6px; border: 1px solid currentColor; border-radius: 50%; }
+.paper-study-step.is-complete { color: #70877a; }
+.paper-study-step.is-complete::before { background: currentColor; }
+.paper-study-step.is-current { color: var(--teal); font-weight: 600; }
+.paper-study-path > i { width: 30px; border-top: 1px solid #c5d0c7; }
 .paper-caption { max-width: 720px; color: #76867e; font-size: 15px; text-align: right; }
 .paper-caption strong { display: block; color: var(--teal); font-size: clamp(21px,1.4vw,26px); line-height: 1.45; font-weight: 500; }
 .paper-caption span { display: block; margin-top: 4px; color: #8a9790; font-size: 14px; }
@@ -504,7 +512,11 @@ body.recording-mode .paper-node.is-selected { outline: none; }
   .cl-footline { gap: 8px; font-size: 10px; }
   .scene-paper { min-height: 100%; grid-template-rows: auto minmax(390px,1fr) auto; gap: 8px; }
   .paper-heading { display: grid; justify-content: stretch; gap: 7px; }
-  .paper-title { gap: 8px; font-size: 10px; }
+  .paper-title { gap: 4px; }
+  .paper-title-main { gap: 6px; font-size: 8px; letter-spacing: .04em; }
+  .paper-title-main strong { font-size: 11px; }
+  .paper-study-path { gap: 5px; font-size: 7px; }
+  .paper-study-path > i { width: 18px; }
   .paper-caption { max-width: none; text-align: left; font-size: 12px; }
   .paper-caption strong { font-size: 13px; }
   .paper-caption span { font-size: 10px; }
