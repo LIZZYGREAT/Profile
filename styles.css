@@ -907,21 +907,16 @@ button { color: inherit; font: inherit; }
 .strategy-bridge-context > div i { color: var(--orange); font-style: normal; }
 .strategy-bridge-context > small { color: #9aa49d; font: 10px var(--mono); letter-spacing: .08em; }
 .strategy-methods { min-height: 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 13px; }
-.method-bridge { min-width: 0; display: flex; flex-direction: column; justify-content: center; align-items: stretch; padding: 18px 21px; border: 1px solid #d1d9d1; background: rgba(255,255,252,.9); opacity: 0; transform: translateY(12px); animation: bridge-card-in .55s ease-out forwards; }
-.method-bridge-ewc { animation-delay: .35s; }
-.method-bridge-lwf { animation-delay: .65s; }
-.method-bridge-icarl { animation-delay: .95s; }
+.method-bridge { min-width: 0; display: flex; flex-direction: column; justify-content: center; align-items: stretch; padding: 18px 21px; border: 1px solid #d1d9d1; background: rgba(255,255,252,.9); opacity: .14; transform: translateY(7px); transition: opacity .45s,transform .45s,box-shadow .45s,border-color .45s; }
+.method-bridge.is-current { opacity: 1; transform: translateY(0); box-shadow: 0 8px 22px rgba(63,91,74,.08); }
+.method-bridge.is-previous { opacity: .45; transform: translateY(0); }
+.method-bridge.is-upcoming { opacity: .16; }
+.strategy-bridge.is-complete .method-bridge { opacity: 1; transform: translateY(0); }
 .bridge-principle { min-height: 122px; display: flex; flex-direction: column; justify-content: center; gap: 9px; text-align: center; }
 .bridge-principle strong { color: #526d61; font-size: clamp(20px,1.65vw,27px); line-height: 1.5; font-weight: 500; }
-.bridge-principle small { color: #94a098; font: 10px var(--mono); letter-spacing: .12em; opacity: 0; animation: fade-in .4s 2.1s forwards; }
-.method-bridge-lwf .bridge-principle small { animation-delay: 2.35s; }
-.method-bridge-icarl .bridge-principle small { animation-delay: 2.6s; }
-.bridge-connector { position: relative; display: grid; place-items: center; height: 35px; color: #a9b8ae; font-size: 20px; opacity: 0; animation: fade-in .3s 1.45s forwards; }
-.method-bridge-lwf .bridge-connector { animation-delay: 1.65s; }
-.method-bridge-icarl .bridge-connector { animation-delay: 1.85s; }
-.bridge-method { display: flex; flex-direction: column; align-items: center; gap: 5px; min-height: 92px; padding-top: 15px; border-top: 1px solid #dbe1db; opacity: 0; transform: translateY(8px); animation: bridge-method-in .5s ease-out 2s forwards; }
-.method-bridge-lwf .bridge-method { animation-delay: 2.3s; }
-.method-bridge-icarl .bridge-method { animation-delay: 2.6s; }
+.bridge-principle small { color: #94a098; font: 10px var(--mono); letter-spacing: .12em; }
+.bridge-connector { position: relative; display: grid; place-items: center; height: 35px; color: #a9b8ae; font-size: 20px; }
+.bridge-method { display: flex; flex-direction: column; align-items: center; gap: 5px; min-height: 92px; padding-top: 15px; border-top: 1px solid #dbe1db; }
 .bridge-method strong { color: var(--teal); font: 25px var(--serif); letter-spacing: .02em; }
 .bridge-method span { color: #718178; font-size: 13px; text-align: center; }
 .method-bridge-ewc { border-top: 3px solid var(--teal); }
@@ -929,8 +924,6 @@ button { color: inherit; font: inherit; }
 .method-bridge-icarl { border-top: 3px solid #bd8d70; }
 .strategy-bridge-caption { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 0 4px; color: #7e8c84; font-size: 13px; }
 .strategy-bridge-caption strong { color: #698174; font: 12px var(--mono); }
-@keyframes bridge-card-in { to { opacity: 1; transform: translateY(0); } }
-@keyframes bridge-method-in { to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 1050px) and (min-width: 761px) {
   .strategy-bridge { padding: 12px; gap: 8px; }
   .strategy-methods { gap: 8px; }

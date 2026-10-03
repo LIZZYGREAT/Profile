@@ -252,13 +252,13 @@
       '<div class="cl-footline"><span>Conceptual visualization</span><span>A → same model θ → B</span></div></section>';
   }
   function sceneStrategyBridge() {
-    const method = (id,principle,english,name,summary) => '<article class="method-bridge method-bridge-' + id + '"><div class="bridge-principle"><strong>' + principle + '</strong><small>' + english + '</small></div><span class="bridge-connector" aria-hidden="true">↓</span><div class="bridge-method"><strong>' + name + '</strong><span>' + summary + '</span></div></article>';
+    const method = (id,principle,english,name,summary) => '<article class="method-bridge method-bridge-' + id + '" data-bridge-method="' + id + '"><div class="bridge-principle"><strong>' + principle + '</strong><small>' + english + '</small></div><span class="bridge-connector" aria-hidden="true">↓</span><div class="bridge-method"><strong>' + name + '</strong><span>' + summary + '</span></div></article>';
     return '<section class="scene cl-scene strategy-bridge-scene"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / STRATEGY → PAPERS</p><h2>解决同一个问题，<em>可以从不同地方入手。</em></h2><p>学习新任务时，怎样尽量保留已经学到的内容？经典方法给出了几种不同思路。</p></div></header>' +
       '<div class="strategy-bridge"><div class="strategy-bridge-context"><span class="strategy-context-label">持续学习的共同目标</span><div><strong>学新的</strong><i>＋</i><strong>尽量保留旧能力</strong></div><small>CONCEPTUAL STRATEGY MAP</small></div><div class="strategy-methods">' +
       method('ewc','限制关键参数变化','REGULARIZATION','EWC','保护对旧任务重要的参数') +
       method('lwf','保留旧模型的响应','DISTILLATION','LwF','继续参考旧模型给出的目标') +
       method('icarl','保留少量代表样本','EXEMPLARS / REPLAY','iCaRL','用代表样本帮助保留旧类别') +
-      '</div><div class="strategy-bridge-caption"><span>三种思路，分别对应下面要看的代表工作</span><strong>EWC　→　LwF　→　iCaRL</strong></div></div>' +
+      '</div><div class="strategy-bridge-caption"><span>这里只抽取每篇工作的一个代表性机制。</span><strong>Representative intuition · 非完整方法定义</strong></div></div>' +
       '<div class="cl-footline"><span>策略示意 · 方法细节以各自论文页面为准</span><span>从问题出发，进入交互式论文工作区</span></div></section>';
   }
   const paperAssets = {
@@ -504,6 +504,21 @@
         if (branch && branch.isConnected) branch.classList.add('is-continuing');
         if (branchScene && branchScene.isConnected) branchScene.classList.add('is-continuing');
       }, 5700);
+    }
+    if (scene.id === 'strategy-bridge') {
+      const strategyBridge = container.querySelector('.strategy-bridge');
+      const methods = [...container.querySelectorAll('[data-bridge-method]')];
+      ['ewc','lwf','icarl'].forEach((id,index) => window.setTimeout(() => {
+        if (!strategyBridge || !strategyBridge.isConnected) return;
+        methods.forEach((methodNode,methodIndex) => {
+          methodNode.classList.toggle('is-current',methodIndex === index);
+          methodNode.classList.toggle('is-previous',methodIndex < index);
+          methodNode.classList.toggle('is-upcoming',methodIndex > index);
+        });
+      },500+index*900));
+      window.setTimeout(() => {
+        if (strategyBridge && strategyBridge.isConnected) strategyBridge.classList.add('is-complete');
+      },3200);
     }
   }
   function advance(direction) {
