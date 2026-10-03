@@ -214,8 +214,28 @@
   function sceneResearchIntro() {
     return '<section class="scene scene-research-intro"><div class="research-intro-transition"><span>LEARN</span><i>→</i><strong>LEARN OVER TIME</strong></div><p class="scene-kicker">03 — RESEARCHING / CONTINUAL LEARNING</p><h1 class="scene-title">如果任务一直变化，<br><em>模型还能一直学下去吗？</em></h1><p class="scene-lead">MentalFlow 的学习回路让我开始追问：任务持续变化时，模型怎样学会新的，同时尽量保留旧能力？</p></section>';
   }
+  function parameterCells(state) {
+    const tones = {
+      initial:[1,2,1,3,2,1,2,1,3,1,2,2,1,3,1,2,2,1,2,3,1,2,1,3,2,1,3,2,1,2,2,3,1,2,3,1,2,1,2,3,1,3,2,1,3,2,1,2],
+      taskA:[2,3,2,3,2,2,3,1,3,2,2,3,2,3,2,2,3,2,2,3,1,2,2,3,3,2,3,2,2,3,2,3,2,3,3,2,2,2,3,3,2,3,2,2,3,3,2,3],
+      taskB:[3,2,3,1,3,2,3,2,2,3,2,3,3,1,3,2,3,2,3,2,3,1,2,3,2,3,2,3,1,3,3,2,3,2,1,3,3,2,3,1,2,3,3,2,1,3,2,3],
+    }[state];
+    return tones.map((tone,index) => '<i class="field-cell field-wave-' + (1+(index%6)) + ' tone-' + tone + '" aria-hidden="true"></i>').join('');
+  }
+  function taskSamples(kind) {
+    const symbols = kind === 'task-a' ? ['○','△','○','△','△','○','△','○'] : ['□','◇','□','◇','◇','□','◇','□'];
+    return symbols.map((symbol,index) => '<i>' + symbol + '</i>').join('');
+  }
   function sceneCLForgetting() {
-    return '<section class="scene cl-scene cl-forgetting"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / CONTINUAL LEARNING</p><h2>学会新的，<em>却把旧的忘了。</em></h2><p>同一个模型先学习旧任务，再继续学习新任务；新任务表现上升时，旧任务可能退步。</p></div></header><div class="cl-story"><div class="cl-task-sequence"><span class="board-label">任务依次到来</span><div class="cl-task-chip task-a-chip"><b>A</b><span>旧任务</span></div><i>→</i><div class="cl-task-chip task-b-chip"><b>B</b><span>新任务</span></div></div><div class="cl-model-token"><div class="model-parameter-glyph">' + new Array(12).fill('<i></i>').join('') + '</div><strong>同一个模型 <em>θ</em></strong><small>持续更新参数</small></div><div class="cl-performance"><span class="board-label">任务表现 · 定性示意</span><div class="performance-row old-task"><b>旧任务 A</b><div class="performance-track"><i></i></div></div><div class="performance-row new-task"><b>新任务 B</b><div class="performance-track"><i></i></div></div><div class="forgetting-reveal"><strong>灾难性遗忘</strong><span>学会新任务，却失去部分旧能力。</span></div></div></div><div class="cl-footline"><span>概念示意，不代表实验数据</span><span>Task A → Task B</span></div></section>';
+    return '<section class="scene cl-scene cl-forgetting"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / LEARNING DYNAMICS</p><h2>任务一个接一个，<em>同一个模型持续更新。</em></h2><p>先学习旧任务 A，再继续学习新任务 B。训练过程会改变模型内部状态，也会影响它已经学会的内容。</p></div></header>' +
+      '<div class="cl-dynamics-stage" data-cl-dynamics><div class="cl-task-stream"><span class="board-label">任务流 · 按时间到来</span>' +
+      '<article class="task-tray task-a-tray"><header><strong>旧任务 A</strong><small>先学习</small></header><div class="sample-tray task-a-samples">' + taskSamples('task-a') + '</div><span class="sample-caption">概念样本</span></article>' +
+      '<article class="task-tray task-b-tray"><header><strong>新任务 B</strong><small>随后到来</small></header><div class="sample-tray task-b-samples">' + taskSamples('task-b') + '</div><span class="sample-caption">另一组概念样本</span></article>' +
+      '<article class="task-tray task-c-tray"><header><strong>后续任务 C</strong><small>继续到来</small></header><div class="sample-tray task-c-samples"><i>＋</i><i>＋</i><i>＋</i><i>＋</i></div></article></div>' +
+      '<div class="cl-learning-path" aria-hidden="true"><span class="sample-batch batch-a batch-a-one">○ △ ○ △</span><span class="sample-batch batch-a batch-a-two">△ ○ △ ○</span><span class="sample-batch batch-b batch-b-one">□ ◇ □ ◇</span><span class="sample-batch batch-b batch-b-two">◇ □ ◇ □</span><i>→</i></div>' +
+      '<section class="cl-model-workspace"><header class="cl-model-heading"><div><span>MODEL</span><strong>θ</strong></div><small>一个模型，持续更新参数</small></header><div class="parameter-stack"><div class="parameter-field parameter-field-ghost" aria-hidden="true">' + parameterCells('taskA') + '</div><div class="parameter-field parameter-field-current is-a-updating" aria-label="模型参数状态示意">' + parameterCells('initial') + '</div><span class="theta-a-label">after Task A · θ_A</span></div><div class="parameter-meta"><span class="model-state-caption">参数状态 · 概念示意</span><span class="same-model-tag">SAME MODEL</span></div></section>' +
+      '<aside class="cl-performance"><span class="board-label">任务表现 · 定性示意</span><div class="performance-row old-task"><b>旧任务 A</b><div class="performance-track"><i></i></div></div><div class="performance-row new-task"><b>新任务 B</b><div class="performance-track"><i></i></div></div><div class="performance-key"><span>较低</span><span>较高</span></div><div class="forgetting-reveal"><strong>学会新的，<br>却把旧的忘了。</strong><span>灾难性遗忘</span><small>Catastrophic Forgetting</small></div></aside></div>' +
+      '<div class="cl-footline"><span>抽象参数与表现仅用于说明训练过程</span><span>Task A → 同一个 θ → Task B</span></div></section>';
   }
   function sceneCLObjective() {
     return '<section class="scene cl-scene cl-objective"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / THE GOAL</p><h2>持续学习：<em>学新的，也尽量保住旧的。</em></h2><p>从同一个初始模型出发，比较“只学新任务”和“兼顾新旧能力”这两种结果。</p></div></header><div class="objective-start"><span>同一起点</span><strong>θ<sub>A</sub></strong><i>↘</i><i>↗</i></div><div class="objective-comparison"><article class="objective-card ordinary-card"><h3>继续训练</h3><p>新任务学会了，旧能力却明显下降。</p><div class="performance-row"><b>旧任务 A</b><div class="performance-track"><i class="quality-low"></i></div></div><div class="performance-row"><b>新任务 B</b><div class="performance-track"><i class="quality-high"></i></div></div></article><article class="objective-card continual-card"><h3>持续学习</h3><p>学习新任务的同时，尽量保留旧能力。</p><div class="performance-row"><b>旧任务 A</b><div class="performance-track"><i class="quality-retained"></i></div></div><div class="performance-row"><b>新任务 B</b><div class="performance-track"><i class="quality-high"></i></div></div></article></div><div class="long-task-stream"><span>A</span><i>→</i><span>B</span><i>→</i><strong>C</strong><i>→</i><span>后续任务…</span><small>TIME →</small></div><div class="cl-footline"><span>定性示意，不表示方法优劣或实验结果</span><span>持续学习关注：学新与保旧</span></div></section>';
@@ -364,6 +384,12 @@
     next.disabled = currentIndex === scenes.length-1;
     setChapter(scene.chapter);
     if (scene.id === 'mental-feedback') requestAnimationFrame(flyEvidence);
+    if (scene.id === 'cl-forgetting') {
+      const dynamics = container.querySelector('[data-cl-dynamics]');
+      window.setTimeout(() => {
+        if (dynamics && dynamics.isConnected) dynamics.classList.add('is-task-b');
+      }, 3200);
+    }
   }
   function advance(direction) {
     const target = currentIndex + direction;
