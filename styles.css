@@ -816,33 +816,22 @@ button { color: inherit; font: inherit; }
 
 /* Freeze and branch from the same learned state. */
 .cl-objective { grid-template-rows: auto minmax(0,1fr) auto auto; gap: 10px; }
-.cl-objective .cl-scene-head h2 { font-size: clamp(36px,3.2vw,52px); }
+.cl-objective .cl-scene-head h2 { font-size: clamp(40px,3.1vw,48px); }
 .cl-objective .cl-scene-head p { max-width: 930px; font-size: 15px; }
 .branch-flow { position: relative; min-height: 0; display: grid; grid-template-columns: minmax(220px,.68fr) minmax(0,1.7fr); gap: 30px; align-items: stretch; padding: 18px 20px; overflow: hidden; border: 1px solid #cbd4cc; background: rgba(235,238,230,.7); }
 .branch-links { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .branch-links path { fill: none; stroke: #a7b8ac; stroke-width: 2; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }
-.branch-flow.is-rewound .branch-links path { animation: branch-connect .8s ease-out forwards; }
-.branch-flow.is-rewound .branch-links path:nth-child(2) { animation-delay: .14s; }
+.branch-flow.is-connected .branch-links path { animation: branch-connect .8s ease-out forwards; }
+.branch-flow.is-connected .branch-links path:nth-child(2) { animation-delay: .14s; }
 .branch-model-source { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; padding: 16px; border: 1px solid #c5d2c7; background: rgba(250,250,245,.96); }
-.branch-source-kicker { margin: 0 0 8px; color: #788981; font-size: 12px; }
+.branch-source-kicker { margin: 0 0 8px; color: #788981; font: 10px var(--mono); letter-spacing: .06em; }
 .branch-origin-field { grid-template-columns: repeat(8,minmax(0,1fr)); width: 100%; aspect-ratio: 4/3; margin: 7px 0 10px; padding: 10px; gap: 5px; }
 .branch-origin-state { color: var(--teal); font: 26px var(--serif); }
-.branch-source-caption { margin-top: 4px; color: #849189; font-size: 12px; opacity: 0; transition: opacity .4s; }
-.rewind-label { position: absolute; right: 13px; top: 13px; color: #a86f50; font: 12px var(--mono); letter-spacing: .13em; opacity: 0; }
-.branch-flow.is-rewound .rewind-label { animation: rewind-flash .75s ease-out both; }
-.branch-flow.is-rewound .branch-origin-state { color: #a56e50; }
-.branch-flow.is-rewound .branch-source-caption { opacity: 1; }
-.branch-flow.is-rewound .branch-origin-field .field-cell { animation: branch-rewind .58s ease-out both; }
-.branch-origin-field .field-wave-1 { animation-delay: .02s !important; }
-.branch-origin-field .field-wave-2 { animation-delay: .1s !important; }
-.branch-origin-field .field-wave-3 { animation-delay: .18s !important; }
-.branch-origin-field .field-wave-4 { animation-delay: .26s !important; }
-.branch-origin-field .field-wave-5 { animation-delay: .34s !important; }
-.branch-origin-field .field-wave-6 { animation-delay: .42s !important; }
+.branch-source-caption { margin-top: 4px; color: #849189; font-size: 12px; }
 .branch-lanes { position: relative; z-index: 1; min-width: 0; min-height: 0; display: grid; grid-template-rows: repeat(2,minmax(0,1fr)); gap: 12px; }
 .branch-lanes .branch-lane { min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 11px; padding: 13px 17px; border: 1px solid #d0d8d0; background: rgba(255,255,252,.94); opacity: 0; transform: translateX(18px); }
-.branch-flow.is-rewound .branch-lane { animation: branch-arrive .55s ease-out .18s forwards; }
-.branch-flow.is-rewound .branch-lane-continual { animation-delay: .32s; }
+.branch-flow.is-branched .branch-lane { animation: branch-arrive .55s ease-out forwards; }
+.branch-flow.is-branched .branch-lane-continual { animation-delay: .14s; }
 .branch-lanes .branch-lane-continual { border-color: #a7c1b2; }
 .branch-lane > header { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 .branch-lane > header div { display: flex; align-items: baseline; gap: 10px; }
@@ -850,27 +839,26 @@ button { color: inherit; font: inherit; }
 .branch-lane-naive > header strong { color: #886a59; }
 .branch-lane > header small { color: #87948d; font: 10px var(--mono); }
 .branch-model-tag { color: #9aa49d; font: 9px var(--mono); letter-spacing: .1em; }
-.branch-lane-content { min-height: 0; display: grid; grid-template-columns: minmax(0,.85fr) minmax(220px,1.15fr); gap: 16px; align-items: center; }
+.branch-lane-content { min-height: 0; display: grid; grid-template-columns: minmax(0,.6fr) minmax(250px,1.4fr); gap: 16px; align-items: center; }
 .branch-model-visual { min-width: 0; }
-.branch-parameter-mini { width: 100%; grid-template-columns: repeat(8,minmax(0,1fr)); aspect-ratio: 2.7; gap: 3px; margin: 0 0 5px; padding: 5px; }
+.branch-parameter-mini { width: 100%; grid-template-columns: repeat(8,minmax(0,1fr)); aspect-ratio: 3.8; gap: 3px; margin: 0 0 5px; padding: 4px; opacity: .68; }
 .branch-model-visual > span { color: #89958e; font-size: 10px; }
-.branch-metrics { display: grid; gap: 12px; }
+.branch-metrics { display: grid; gap: 17px; }
 .branch-performance-row { display: grid; grid-template-columns: 76px minmax(0,1fr); gap: 8px; align-items: center; color: #6b7c73; font-size: 12px; }
-.branch-performance-row .performance-track { height: 13px; }
-.branch-performance-row .performance-track i { width: 0; background: #ca9477; animation: branch-bar .9s ease-out 1.1s forwards; }
-.branch-lane-continual .branch-performance-row:first-child .performance-track i { background: #819f8d; }
-.branch-lane-continual .branch-performance-row:last-child .performance-track i { background: #6f9b86; }
+.branch-performance-row .performance-track { height: 18px; }
+.branch-performance-row .performance-track i { width: 0; background: #ca9477; animation: none; }
+.branch-performance-row:first-child .performance-track i { background: #4f8b7b; }
+.branch-performance-row:last-child .performance-track i { background: #c88661; }
+.branch-flow.is-branched .branch-performance-row .performance-track i { animation: branch-bar .9s ease-out .9s forwards; }
 .branch-task-stream { display: flex; justify-content: center; align-items: center; gap: 13px; min-height: 32px; color: #718279; font: 13px var(--mono); }
 .branch-task-stream > i { color: var(--orange); font-style: normal; }
-.branch-task-stream .task-c-arrives { color: var(--teal); opacity: .18; transition: opacity .7s; }
+.branch-task-stream .task-c-arrives { color: var(--teal); opacity: 0; transition: opacity .7s; }
 .branch-task-stream .task-tail-arrives { opacity: 0; color: #8b9790; transition: opacity .7s; }
 .branch-task-stream small { margin-left: 15px; font-size: 10px; letter-spacing: .08em; }
 .cl-objective.is-continuing .branch-lane-naive { animation: none; opacity: .18; transform: translateX(12px) scale(.97); transition: opacity .7s, transform .7s; }
 .cl-objective.is-continuing .branch-lane-continual { animation: none; opacity: 1; transform: translateX(-13px) scale(1.025); transition: transform .7s; }
 .cl-objective.is-continuing .branch-task-stream .task-c-arrives { opacity: 1; transition: none; animation: fade-in .7s ease-out both; }
 .cl-objective.is-continuing .task-tail-arrives { opacity: .8; transition: none; animation: fade-in .7s ease-out .2s both; }
-@keyframes rewind-flash { 0%,100% { opacity: 0; } 24%,76% { opacity: 1; } }
-@keyframes branch-rewind { 0% { transform: scale(.78); opacity: .7; background: #ae795f; } 65% { background: #d5e2d8; } 100% { transform: scale(1); opacity: 1; background: var(--cell-state,#8daf9f); } }
 @keyframes branch-connect { 0% { stroke-dashoffset: 1; opacity: 0; } 15% { opacity: .9; } 100% { stroke-dashoffset: 0; opacity: .8; } }
 @keyframes branch-arrive { to { opacity: 1; transform: translateX(0); } }
 @keyframes branch-bar { to { width: var(--bar-width); } }
@@ -878,7 +866,7 @@ button { color: inherit; font: inherit; }
   .branch-flow { grid-template-columns: minmax(165px,.62fr) minmax(0,1.7fr); gap: 17px; padding: 12px; }
   .branch-model-source { padding: 10px; }
   .branch-lanes .branch-lane { gap: 7px; padding: 9px; }
-  .branch-lane-content { grid-template-columns: minmax(0,.75fr) minmax(155px,1.25fr); gap: 9px; }
+  .branch-lane-content { grid-template-columns: minmax(0,.58fr) minmax(155px,1.42fr); gap: 9px; }
   .branch-lane > header strong { font-size: 14px; }
   .branch-lane > header small { font-size: 8px; }
   .branch-performance-row { grid-template-columns: 62px minmax(0,1fr); gap: 5px; font-size: 10px; }

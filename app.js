@@ -244,12 +244,12 @@
   }
   function sceneCLObjective() {
     const lane = (kind,title,english,oldWidth,newWidth) => '<article class="branch-lane branch-lane-' + kind + '"><header><div><strong>' + title + '</strong><small>' + english + '</small></div><span class="branch-model-tag">MODEL STATE</span></header><div class="branch-lane-content"><div class="branch-model-visual"><div class="parameter-field branch-parameter-mini" aria-hidden="true">' + parameterCells(kind === 'naive' ? 'taskB' : 'taskA',24) + '</div><span>更新后的参数状态 · 示意</span></div><div class="branch-metrics"><div class="branch-performance-row"><b>旧任务 A</b><div class="performance-track"><i style="--bar-width:' + oldWidth + '%"></i></div></div><div class="branch-performance-row"><b>新任务 B</b><div class="performance-track"><i style="--bar-width:' + newWidth + '%"></i></div></div></div></div></article>';
-    return '<section class="scene cl-scene cl-objective"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / FREEZE &amp; BRANCH</p><h2>从同一个起点出发，<em>学习新知识，也尽量保留旧能力。</em></h2><p>持续学习关注的不是只把新任务学好，而是在继续学习时尽量保留已经学到的内容。</p></div></header>' +
+    return '<section class="scene cl-scene cl-objective"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / FREEZE &amp; BRANCH</p><h2>从同一个起点出发，<em>学习新知识，也尽量保留旧能力。</em></h2><p>为了比较两种训练方式，这里回到 Task A 学完后的同一起点；对比的是继续学习 Task B 时，旧任务和新任务表现如何变化。</p></div></header>' +
       '<div class="branch-flow" data-branch-flow><svg class="branch-links" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true"><path d="M 205 250 C 300 250 292 140 380 140 L 450 140"></path><path d="M 205 250 C 300 250 292 365 380 365 L 450 365"></path></svg>' +
-      '<section class="branch-model-source"><span class="rewind-label">REWIND</span><span class="branch-source-kicker">从上一页的模型状态回退</span><div class="parameter-field branch-origin-field" aria-hidden="true">' + parameterCells('taskB') + '</div><strong class="branch-origin-state">θ_B</strong><span class="branch-source-caption">回到相同起点</span></section>' +
-      '<div class="branch-lanes">' + lane('naive','普通继续训练','Naive fine-tuning',29,90) + lane('continual','持续学习','Continual learning',73,86) + '</div></div>' +
+      '<section class="branch-model-source"><span class="branch-source-kicker">COMPARISON RESET · 对比起点</span><div class="parameter-field branch-origin-field" aria-hidden="true">' + parameterCells('taskA') + '</div><strong class="branch-origin-state">θ_A</strong><span class="branch-source-caption">Task A 学完后的模型状态</span></section>' +
+      '<div class="branch-lanes">' + lane('naive','普通继续训练','Naive fine-tuning',29,90) + lane('continual','持续学习','Continual learning',62,76) + '</div></div>' +
       '<div class="branch-task-stream"><span>A</span><i>→</i><span>B</span><i>→</i><strong class="task-c-arrives">C</strong><i class="task-tail-arrives">→</i><span class="task-tail-arrives">D　E　…</span><small class="task-tail-arrives">TIME ─────────────────────→</small></div>' +
-      '<div class="cl-footline"><span>两条路径均为定性示意，不表示方法优劣或实验结果</span><span>学习新任务，同时尽量保留旧能力</span></div></section>';
+      '<div class="cl-footline"><span>Conceptual visualization</span><span>A → same model θ → B</span></div></section>';
   }
   function sceneStrategyBridge() {
     const method = (id,principle,english,name,summary) => '<article class="method-bridge method-bridge-' + id + '"><div class="bridge-principle"><strong>' + principle + '</strong><small>' + english + '</small></div><span class="bridge-connector" aria-hidden="true">↓</span><div class="bridge-method"><strong>' + name + '</strong><span>' + summary + '</span></div></article>';
@@ -495,9 +495,11 @@
       const branchScene = container.querySelector('.cl-objective');
       window.setTimeout(() => {
         if (!branch || !branch.isConnected) return;
-        branch.classList.add('is-rewound');
-        branch.querySelector('.branch-origin-state').textContent = 'θ_A';
-      }, 650);
+        branch.classList.add('is-connected');
+      }, 500);
+      window.setTimeout(() => {
+        if (branch && branch.isConnected) branch.classList.add('is-branched');
+      }, 1450);
       window.setTimeout(() => {
         if (branch && branch.isConnected) branch.classList.add('is-continuing');
         if (branchScene && branchScene.isConnected) branchScene.classList.add('is-continuing');
