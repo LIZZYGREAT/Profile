@@ -77,19 +77,21 @@
     schedule.forEach((event) => {
       const x = mapX(event.start), width = mapX(event.end) - x;
       bands += '<rect class="' + bandTypes[event.kind] + '" x="' + x.toFixed(1) + '" y="62" width="' + width.toFixed(1) + '" height="242" opacity=".54" rx="2"></rect>';
+      if (mode === 'personal-overlay' && event.label === '午饭 / 午休') bands += '<rect class="personal-event-highlight" data-personal-highlight="lunch" x="' + x.toFixed(1) + '" y="62" width="' + width.toFixed(1) + '" height="242" rx="2"></rect>';
+      if (mode === 'personal-overlay' && event.label === '项目讨论') bands += '<rect class="personal-event-highlight" data-personal-highlight="meeting" x="' + x.toFixed(1) + '" y="62" width="' + width.toFixed(1) + '" height="242" rx="2"></rect>';
       bands += '<line x1="' + x.toFixed(1) + '" y1="62" x2="' + x.toFixed(1) + '" y2="304" stroke="#99b4a2" stroke-width="1" opacity=".55"></line>';
       const labelClass = mode === 'forecast' && event.label === '项目会议' ? 'band-label current-event-label' : 'band-label';
       bands += svgTag('text',{x:(x+width/2).toFixed(1),y:event.kind==='recovery'?'326':'55','text-anchor':'middle',class:labelClass},event.label);
     });
+    if (mode === 'personal-overlay') {
+      const x = mapX(19), width = mapX(20)-x;
+      bands += '<rect class="personal-event-highlight" data-personal-highlight="late-gap" x="' + x.toFixed(1) + '" y="62" width="' + width.toFixed(1) + '" height="242" rx="2"></rect>';
+    }
     if (includeBadminton) {
       const x = mapX(20.5), width = mapX(21) - x;
       bands += '<rect data-badminton-band class="band-recovery badminton-band" x="' + x.toFixed(1) + '" y="62" width="' + width.toFixed(1) + '" height="242" opacity=".82" rx="2"></rect>';
       bands += '<line x1="' + x.toFixed(1) + '" y1="62" x2="' + x.toFixed(1) + '" y2="304" stroke="#679777" stroke-width="1.5"></line>';
       bands += svgTag('text',{x:(x+width/2).toFixed(1),y:'347','text-anchor':'middle',class:'band-label'},'羽毛球 · 对话');
-    }
-    if (mode === 'feedback' && !includeBadminton) {
-      const x = mapX(20.5);
-      bands += '<rect data-badminton-target x="' + (x-2).toFixed(1) + '" y="62" width="' + (mapX(21)-x+4).toFixed(1) + '" height="242" fill="transparent" opacity="0"></rect>';
     }
     let grid = '';
     [91,151,211,274,304].forEach((y) => { grid += '<line class="gridline" x1="64" y1="' + y + '" x2="880" y2="' + y + '"></line>'; });
@@ -112,9 +114,11 @@
       const lower = future.slice().reverse().map((p) => p[0] + ' ' + (p[1] + 22)).join(' L ');
       curve += '<path class="uncertainty" d="M ' + nx + ' ' + (ny-14) + ' L ' + upper + ' L ' + lower + ' L ' + nx + ' ' + (ny+14) + ' Z"></path>';
       curve += '<line class="risk-line" x1="64" y1="' + mapY(.77) + '" x2="880" y2="' + mapY(.77) + '"></line>';
-      curve += svgTag('text',{x:mapX(20),y:String(mapY(.77)-12),'text-anchor':'end',class:'axis-caption'},'Risk threshold');
+      curve += svgTag('text',{x:mapX(20),y:String(mapY(.77)-27),'text-anchor':'end',class:'secondary-annotation'},'risk threshold');
+      curve += svgTag('text',{x:mapX(20),y:String(mapY(.77)-12),'text-anchor':'end',class:'axis-caption'},'高压风险参考线');
       curve += '<line class="now-line" x1="' + nx + '" y1="48" x2="' + nx + '" y2="304"></line>';
-      curve += svgTag('text',{x:nx+7,y:'43',class:'annotation'},'17:32 · Elevated risk ahead');
+      curve += svgTag('text',{x:nx+7,y:'32',class:'annotation'},'17:32 · 晚间风险预计上升');
+      curve += svgTag('text',{x:nx+7,y:'45',class:'secondary-annotation'},'elevated risk ahead');
       curve += '<path class="curve-line past-line" d="' + smoothPath(pathPoints(forecastAnchors,now)) + '"></path>';
       curve += '<path class="forecast-line" d="' + smoothPath(future) + '"></path>';
     } else {
@@ -167,7 +171,6 @@
       '<div class="academic-head"><div><p class="scene-kicker">01 — ACADEMIC FOUNDATION</p><h1 class="scene-title">以扎实基础，<em>向前探索。</em></h1></div><p class="academic-context">计算机专业<br>2024 级 · 大三</p></div>' +
       '<div class="metrics-row">' +
       metric('GPA','3.76<small>/ 4.00</small>','CUMULATIVE GPA',true) +
-      metric('核心课程','6+<small>门</small>','已列出的代表课程',false) +
       metric('竞赛获奖','2<small>项</small>','2025 · 赛区奖项',false) +
       '</div><div class="academic-note"><span>成绩是阶段结果，背后是逐步形成的计算机知识结构。</span><strong>LEARNING → KNOWLEDGE STRUCTURE</strong></div></section>';
   }
@@ -196,8 +199,10 @@
   }
   function profileMarkup(which) {
     const a = which === 'a';
-    const values = a ? ['高','高','高'] : ['中','高','低'];
-    return '<article class="person-profile ' + (a?'person-a':'person-b') + '"><div class="person-profile-title"><h3>USER ' + (a?'A':'B') + '</h3><span>个人先验示意</span></div><div><span>课程执行胜任感</span><b>' + values[0] + '</b></div><div><span>任务个人重要性</span><b>' + values[1] + '</b></div><div><span>运动恢复适配</span><b>' + values[2] + '</b></div></article>';
+    const values = a
+      ? [['课程任务','对课程任务更有把握'],['任务评价','这次任务很重要'],['运动反馈','运动后恢复得比较明显']]
+      : [['课程任务','对课程任务把握一般'],['任务评价','这次任务同样重要'],['运动反馈','运动恢复效果相对弱']];
+    return '<article class="person-profile ' + (a?'person-a':'person-b') + '"><div class="person-profile-title"><h3>USER ' + (a?'A':'B') + '</h3><span>illustrative appraisal prior</span></div>' + values.map((item) => '<div><span>' + item[0] + '</span><b>' + item[1] + '</b></div>').join('') + '</article>';
   }
   function scenePeople() {
     return '<section class="scene scene-personalization"><div class="person-head"><div>' + sceneHead('02 — BUILDING / PERSONALIZATION','同一日程，<em>不同人的轨迹。</em>','日程相同，不代表感受相同。系统结合个人对事件的评价、历史反馈和已有证据，形成不同的预测。') + '</div></div><div class="person-shared-schedule"><b>同一日程</b><span>早课</span><i>→</i><span>午休</span><i>→</i><span>项目讨论</span><i>→</i><span>晚间作业</span><small>SHARED SCHEDULE</small></div><div class="person-comparison">' + profileMarkup('a') + profileMarkup('b') + '</div><div class="personal-overlay"><div class="personal-overlay-head"><strong>相同日程下的两条示意轨迹</strong><span>个人先验示意 · 非心理测量</span></div>' + graphMarkup({mode:'personal-overlay'}) + '<div class="personal-overlay-takeaway">同一日程　≠　同一压力轨迹</div></div></section>';
@@ -209,7 +214,7 @@
     return '<section class="scene scene-care"><div class="mental-heading">' + sceneHead('02 — BUILDING / CARE','18:12，<em>在合适的窗口回应。</em>','提醒发出去，并不意味着压力会因为一条消息自动下降。真正发生的休息、运动和反馈，才会成为新的证据。') + '</div><div class="care-layout"><div class="care-card"><div class="chart-header"><strong>压力状态 × 时间</strong><span class="chart-qualifier">提醒发出 · 18:12</span></div>' + graphMarkup({mode:'care'}) + '<div class="mental-caption">此时尚未发生新的恢复行为，曲线继续按原有状态演化。</div></div><aside class="care-info"><span class="aside-index">LIZZY · 18:12</span><div class="care-chat"><div class="chat-time"><span>LIZZY</span><span>18:12</span></div>今天从早课到下午讨论排得挺满，晚上那个作业还在。先别急着继续坐着硬顶，出去走走或者打会儿球都行。你前几次运动完状态都缓得挺快，回来再收尾会舒服些。</div></aside></div></section>';
   }
   function sceneFeedback() {
-    return '<section class="scene scene-feedback"><div class="mental-heading">' + sceneHead('02 — BUILDING / FEEDBACK &amp; LEARNING','真实行动与反馈，<em>继续丰富理解。</em>','一次反馈不会立刻重写长期画像；它会成为新证据，帮助系统逐步理解这个人。') + '</div><div class="feedback-layout"><div class="feedback-card"><div class="chart-header"><strong>压力状态 × 时间</strong><span class="chart-qualifier">20:30–21:00 · 运动恢复</span></div>' + graphMarkup({mode:'feedback'}) + '<div class="chart-legend feedback-legend"><span><i class="legend-swatch prior"></i>反馈前估计</span><span><i class="legend-swatch updated"></i>加入反馈后的更新示意</span></div><div class="mental-caption">21:08 对话确认后，运动与平滑回落才进入示意轨迹。</div></div><aside class="feedback-info"><span class="aside-index">你 + LIZZY · 21:08</span><div class="feedback-chat"><div class="chat-bubble user"><header><span>你</span><span>21:08</span></header>刚刚和室友打了<span class="evidence-source" data-evidence-source>半小时羽毛球</span>，<span class="evidence-source" data-evidence-source>舒服多了</span>，今天真的累坏了。</div><div class="chat-bubble"><header><span>LIZZY</span><span>21:09</span></header>看来这半小时挺值得。今天从早课到下午讨论确实不轻松，先缓一缓，作业晚点再收尾也行。</div></div><div class="feedback-evidence"><span>这次反馈</span><b>→</b><strong>成为以后判断的一条新证据</strong><small>episode evidence</small></div></aside></div><div class="closure-loop"><span>理解</span><i>→</i><span>建模</span><i>→</i><span>预测</span><i>→</i><span>支持</span><i>→</i><strong>学习</strong><i>↺</i></div></section>';
+    return '<section class="scene scene-feedback"><div class="mental-heading">' + sceneHead('02 — BUILDING / FEEDBACK &amp; LEARNING','真实行动与反馈，<em>继续丰富理解。</em>','一次反馈不会立刻重写长期画像；它会成为新证据，帮助系统逐步理解这个人。') + '</div><div class="feedback-layout"><div class="feedback-card"><div class="chart-header"><strong>压力状态 × 时间</strong><span class="chart-qualifier">20:30–21:00 · 运动恢复</span></div>' + graphMarkup({mode:'feedback'}) + '<div class="chart-legend feedback-legend"><span><i class="legend-swatch prior"></i>反馈前估计</span><span><i class="legend-swatch updated"></i>加入反馈后的更新示意</span></div><div class="mental-caption">21:08 对话确认后，运动与平滑回落才进入示意轨迹。</div></div><aside class="feedback-info"><span class="aside-index">你 + LIZZY · 21:08</span><div class="feedback-chat"><div class="chat-bubble user"><header><span>你</span><span>21:08</span></header>刚刚和室友打了<span class="evidence-source" data-evidence-source>半小时羽毛球</span>，<span class="evidence-source" data-evidence-source>舒服多了</span>，今天真的累坏了。</div><div class="chat-bubble"><header><span>LIZZY</span><span>21:09</span></header>看来这半小时挺值得。今天从早课到下午讨论确实不轻松，先缓一缓，作业晚点再收尾也行。</div></div><div class="feedback-evidence-marker" data-feedback-evidence-marker><strong>恢复反馈</strong><small>evidence · 观测信号</small></div><div class="feedback-evidence"><span>这次反馈</span><b>→</b><strong>成为以后判断的一条新证据</strong><small>episode evidence</small></div></aside></div><div class="closure-loop"><span>理解</span><i>→</i><span>建模</span><i>→</i><span>预测</span><i>→</i><span>支持</span><i>→</i><strong>学习</strong><i>↺</i></div></section>';
   }
   function sceneResearchIntro() {
     return '<section class="scene scene-research-intro"><div class="research-intro-transition"><span>LEARN</span><i>→</i><strong>LEARN OVER TIME</strong></div><p class="scene-kicker">03 — RESEARCHING / CONTINUAL LEARNING</p><h1 class="scene-title">如果任务一直变化，<br><em>模型还能一直学下去吗？</em></h1><p class="scene-lead">MentalFlow 的学习回路让我开始追问：任务持续变化时，模型怎样学会新的，同时尽量保留旧能力？</p></section>';
@@ -281,7 +286,7 @@
     return '<svg class="axis-trajectory ' + className + '" viewBox="64 62 816 242" preserveAspectRatio="none" aria-hidden="true"><path d="' + smoothPath(pathPoints(anchors,24)) + '"></path></svg>';
   }
   function sceneAdaptation() {
-    return '<section class="scene scene-adaptation"><div class="adaptation-axes"><span class="axis-y-label">DIFFERENT PEOPLE</span><span class="axis-x-label">CHANGING TASKS / DATA <b>→</b></span><span class="axis-person-label axis-person-a">USER A</span><span class="axis-person-label axis-person-b">USER B</span><span class="axis-person-label axis-person-c">USER C</span><span class="axis-stream axis-stream-a"></span><span class="axis-stream axis-stream-b"></span><div class="axis-core"><strong>ADAPTATION</strong><small>Adapt over time × Adapt across people</small></div></div><div class="adaptation-summary"><p class="scene-kicker">ONE QUESTION · TWO DIRECTIONS</p><h2>适应变化，<br>也适应不同的人。</h2><p>持续学习关注跨时间与任务的适应；个性化关注不同个体。两者共同指向智能系统如何在长期使用中持续调整。</p><div class="adaptation-equation"><strong>CONTINUAL LEARNING</strong> · Adapt over time<br><strong>PERSONALIZATION</strong> · Adapt across people</div></div></section>';
+    return '<section class="scene scene-adaptation"><div class="adaptation-axes"><span class="axis-y-label">DIFFERENT PEOPLE</span><span class="axis-x-label">CHANGING TASKS / DATA <b>→</b></span><span class="axis-person-label axis-person-a">USER A</span><span class="axis-person-label axis-person-b">USER B</span><span class="axis-person-label axis-person-c">USER C</span>' + miniTrajectory('trajectory-a',anchorsA) + miniTrajectory('trajectory-b',anchorsB) + '<div class="adapt-task-stream"><span class="adapt-task-tag task-a" style="--task-stop:4%">A</span><i class="adapt-task-link link-a" style="--task-stop:19%">→</i><span class="adapt-task-tag task-b" style="--task-stop:34%">B</span><i class="adapt-task-link link-b" style="--task-stop:49%">→</i><span class="adapt-task-tag task-c" style="--task-stop:64%">C</span><i class="adapt-task-link link-c" style="--task-stop:79%">→</i><span class="adapt-task-tag task-more" style="--task-stop:94%">…</span></div><div class="axis-core"><strong>ADAPTATION</strong><small>Adapt over time × Adapt across people</small></div></div><div class="adaptation-summary"><p class="scene-kicker">ONE QUESTION · TWO DIRECTIONS</p><h2>适应变化，<br>也适应不同的人。</h2><p>持续学习关注跨时间与任务的适应；个性化关注不同个体。两者共同指向智能系统如何在长期使用中持续调整。</p><div class="adaptation-equation"><strong>CONTINUAL LEARNING</strong> · Adapt over time<br><strong>PERSONALIZATION</strong> · Adapt across people</div></div></section>';
   }
 
   const scenes = [
@@ -328,14 +333,15 @@
   }
   function flyEvidence() {
     const sourceNodes = [...document.querySelectorAll('[data-evidence-source]')];
-    const target = document.querySelector('[data-badminton-target]');
     const scene = document.querySelector('.scene-feedback');
+    const target = scene?.querySelector('[data-feedback-evidence-marker]');
     if (!sourceNodes.length || !target || !scene) return;
     let finishCount = 0;
     function complete() {
       finishCount += 1;
       if (finishCount !== sourceNodes.length) return;
-      const svg = target.ownerSVGElement;
+      target.classList.add('is-received');
+      const svg = scene.querySelector('.stress-svg');
       const bandGroup = svg.querySelector('[data-schedule-layer]');
       const x = mapX(20.5), width = mapX(21)-x;
       const band = document.createElementNS(NS,'rect');
