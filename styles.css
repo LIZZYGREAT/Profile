@@ -655,7 +655,7 @@ body.recording-mode .paper-node.is-selected { outline: none; }
 .scene-research-intro .scene-kicker { justify-content: center; }
 .scene-research-intro .scene-title { max-width: 980px; margin: 0 auto; }
 .scene-research-intro .scene-lead { max-width: 790px; margin: 20px auto 0; }
-.cl-scene { display: grid; grid-template-rows: auto minmax(0,1fr) auto; gap: 13px; padding: 0 2%; }
+.cl-scene { display: grid; grid-template-columns: minmax(0,1fr); grid-template-rows: auto minmax(0,1fr) auto; gap: 13px; padding: 0 2%; }
 .cl-scene-head { display: block; margin: 0; }
 .cl-scene-head .scene-kicker { margin-bottom: 9px; }
 .cl-scene-head h2 { font-size: clamp(38px,3.5vw,58px); }
@@ -911,7 +911,7 @@ body.recording-mode .paper-node.is-selected { outline: none; }
 
 /* Strategy bridge: plain-language principles lead directly to the papers. */
 .strategy-bridge-scene { grid-template-rows: auto minmax(0,1fr) auto; }
-.strategy-bridge-scene .cl-scene-head h2 { font-size: clamp(38px,3.3vw,54px); }
+.strategy-bridge-scene .cl-scene-head h2 { font-size: clamp(40px,3vw,48px); }
 .strategy-bridge-scene .cl-scene-head p { max-width: 920px; font-size: 15px; }
 .strategy-bridge { min-height: 0; display: grid; grid-template-rows: auto minmax(0,1fr) auto; gap: 13px; padding: 16px 20px; border: 1px solid #cbd4cc; background: rgba(235,238,230,.7); }
 .strategy-bridge-context { display: flex; justify-content: center; align-items: center; gap: 18px; padding: 8px 12px 13px; border-bottom: 1px solid #d2dbd2; color: #60756a; }
@@ -938,6 +938,7 @@ body.recording-mode .paper-node.is-selected { outline: none; }
 .method-bridge-icarl { border-top: 3px solid #bd8d70; }
 .strategy-bridge-caption { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 0 4px; color: #7e8c84; font-size: 13px; }
 .strategy-bridge-caption strong { color: #698174; font: 12px var(--mono); }
+.cl-scene .cl-footline { font-size: 11px; opacity: .6; }
 @media (max-width: 1050px) and (min-width: 761px) {
   .strategy-bridge { padding: 12px; gap: 8px; }
   .strategy-methods { gap: 8px; }

@@ -259,7 +259,7 @@
       method('lwf','保留旧模型的响应','DISTILLATION','LwF','继续参考旧模型给出的目标') +
       method('icarl','保留少量代表样本','EXEMPLARS / REPLAY','iCaRL','用代表样本帮助保留旧类别') +
       '</div><div class="strategy-bridge-caption"><span>这里只抽取每篇工作的一个代表性机制。</span><strong>Representative intuition · 非完整方法定义</strong></div></div>' +
-      '<div class="cl-footline"><span>策略示意 · 方法细节以各自论文页面为准</span><span>从问题出发，进入交互式论文工作区</span></div></section>';
+      '<div class="cl-footline"><span>Conceptual visualization</span><span>A → same model θ → B</span></div></section>';
   }
   const paperAssets = {
     ewc:{src:'assets/ewc.png',width:1896,height:1078,alt:'EWC 持续学习可视化实验室页面，展示运行视图与数学视图'},
