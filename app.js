@@ -214,13 +214,13 @@
   function sceneResearchIntro() {
     return '<section class="scene scene-research-intro"><div class="research-intro-transition"><span>LEARN</span><i>→</i><strong>LEARN OVER TIME</strong></div><p class="scene-kicker">03 — RESEARCHING / CONTINUAL LEARNING</p><h1 class="scene-title">如果任务一直变化，<br><em>模型还能一直学下去吗？</em></h1><p class="scene-lead">MentalFlow 的学习回路让我开始追问：任务持续变化时，模型怎样学会新的，同时尽量保留旧能力？</p></section>';
   }
-  function parameterCells(state) {
+  function parameterCells(state, limit) {
     const tones = {
       initial:[1,2,1,3,2,1,2,1,3,1,2,2,1,3,1,2,2,1,2,3,1,2,1,3,2,1,3,2,1,2,2,3,1,2,3,1,2,1,2,3,1,3,2,1,3,2,1,2],
       taskA:[2,3,2,3,2,2,3,1,3,2,2,3,2,3,2,2,3,2,2,3,1,2,2,3,3,2,3,2,2,3,2,3,2,3,3,2,2,2,3,3,2,3,2,2,3,3,2,3],
       taskB:[3,2,3,1,3,2,3,2,2,3,2,3,3,1,3,2,3,2,3,2,3,1,2,3,2,3,2,3,1,3,3,2,3,2,1,3,3,2,3,1,2,3,3,2,1,3,2,3],
     }[state];
-    return tones.map((tone,index) => '<i class="field-cell field-wave-' + (1+(index%6)) + ' tone-' + tone + '" aria-hidden="true"></i>').join('');
+    return tones.slice(0,limit || tones.length).map((tone,index) => '<i class="field-cell field-wave-' + (1+(index%6)) + ' tone-' + tone + '" aria-hidden="true"></i>').join('');
   }
   function taskSamples(kind) {
     const symbols = kind === 'task-a' ? ['○','△','○','△','△','○','△','○'] : ['□','◇','□','◇','◇','□','◇','□'];
@@ -238,7 +238,13 @@
       '<div class="cl-footline"><span>抽象参数与表现仅用于说明训练过程</span><span>Task A → 同一个 θ → Task B</span></div></section>';
   }
   function sceneCLObjective() {
-    return '<section class="scene cl-scene cl-objective"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / THE GOAL</p><h2>持续学习：<em>学新的，也尽量保住旧的。</em></h2><p>从同一个初始模型出发，比较“只学新任务”和“兼顾新旧能力”这两种结果。</p></div></header><div class="objective-start"><span>同一起点</span><strong>θ<sub>A</sub></strong><i>↘</i><i>↗</i></div><div class="objective-comparison"><article class="objective-card ordinary-card"><h3>继续训练</h3><p>新任务学会了，旧能力却明显下降。</p><div class="performance-row"><b>旧任务 A</b><div class="performance-track"><i class="quality-low"></i></div></div><div class="performance-row"><b>新任务 B</b><div class="performance-track"><i class="quality-high"></i></div></div></article><article class="objective-card continual-card"><h3>持续学习</h3><p>学习新任务的同时，尽量保留旧能力。</p><div class="performance-row"><b>旧任务 A</b><div class="performance-track"><i class="quality-retained"></i></div></div><div class="performance-row"><b>新任务 B</b><div class="performance-track"><i class="quality-high"></i></div></div></article></div><div class="long-task-stream"><span>A</span><i>→</i><span>B</span><i>→</i><strong>C</strong><i>→</i><span>后续任务…</span><small>TIME →</small></div><div class="cl-footline"><span>定性示意，不表示方法优劣或实验结果</span><span>持续学习关注：学新与保旧</span></div></section>';
+    const lane = (kind,title,english,oldWidth,newWidth) => '<article class="branch-lane branch-lane-' + kind + '"><header><div><strong>' + title + '</strong><small>' + english + '</small></div><span class="branch-model-tag">MODEL STATE</span></header><div class="branch-lane-content"><div class="branch-model-visual"><div class="parameter-field branch-parameter-mini" aria-hidden="true">' + parameterCells(kind === 'naive' ? 'taskB' : 'taskA',24) + '</div><span>更新后的参数状态 · 示意</span></div><div class="branch-metrics"><div class="branch-performance-row"><b>旧任务 A</b><div class="performance-track"><i style="--bar-width:' + oldWidth + '%"></i></div></div><div class="branch-performance-row"><b>新任务 B</b><div class="performance-track"><i style="--bar-width:' + newWidth + '%"></i></div></div></div></div></article>';
+    return '<section class="scene cl-scene cl-objective"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / FREEZE &amp; BRANCH</p><h2>从同一个起点出发，<em>学习新知识，也尽量保留旧能力。</em></h2><p>持续学习关注的不是只把新任务学好，而是在继续学习时尽量保留已经学到的内容。</p></div></header>' +
+      '<div class="branch-flow" data-branch-flow><svg class="branch-links" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true"><path d="M 205 250 C 300 250 292 140 380 140 L 450 140"></path><path d="M 205 250 C 300 250 292 365 380 365 L 450 365"></path></svg>' +
+      '<section class="branch-model-source"><span class="rewind-label">REWIND</span><span class="branch-source-kicker">从上一页的模型状态回退</span><div class="parameter-field branch-origin-field" aria-hidden="true">' + parameterCells('taskB') + '</div><strong class="branch-origin-state">θ_B</strong><span class="branch-source-caption">回到相同起点</span></section>' +
+      '<div class="branch-lanes">' + lane('naive','普通继续训练','Naive fine-tuning',29,90) + lane('continual','持续学习','Continual learning',73,86) + '</div></div>' +
+      '<div class="branch-task-stream"><span>A</span><i>→</i><span>B</span><i>→</i><strong class="task-c-arrives">C</strong><i class="task-tail-arrives">→</i><span class="task-tail-arrives">D　E　…</span><small class="task-tail-arrives">TIME ─────────────────────→</small></div>' +
+      '<div class="cl-footline"><span>两条路径均为定性示意，不表示方法优劣或实验结果</span><span>学习新任务，同时尽量保留旧能力</span></div></section>';
   }
   function scenePaper(camera) {
     const info = {
@@ -389,6 +395,19 @@
       window.setTimeout(() => {
         if (dynamics && dynamics.isConnected) dynamics.classList.add('is-task-b');
       }, 3200);
+    }
+    if (scene.id === 'cl-objective') {
+      const branch = container.querySelector('[data-branch-flow]');
+      const branchScene = container.querySelector('.cl-objective');
+      window.setTimeout(() => {
+        if (!branch || !branch.isConnected) return;
+        branch.classList.add('is-rewound');
+        branch.querySelector('.branch-origin-state').textContent = 'θ_A';
+      }, 650);
+      window.setTimeout(() => {
+        if (branch && branch.isConnected) branch.classList.add('is-continuing');
+        if (branchScene && branchScene.isConnected) branchScene.classList.add('is-continuing');
+      }, 5700);
     }
   }
   function advance(direction) {
