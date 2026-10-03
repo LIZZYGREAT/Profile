@@ -12,4 +12,4 @@
 2. BUILDING：MentalFlow 的一天、模型、个体差异、预测、关怀和反馈。
 3. RESEARCHING：持续学习过程、论文交互式学习页面、适应性收束。
 
-MentalFlow 压力曲线与持续学习探针均为概念示意，不代表测量数据、正式算法输出或论文实验结果。论文学习段直接引用 assets/ 中的 EWC、LwF、iCaRL 原图。
+MentalFlow 压力曲线与持续学习任务表现条均为概念示意，不代表测量数据、正式算法输出或论文实验结果。论文学习段直接引用 assets/ 中的 EWC、LwF、iCaRL 原图。

@@ -118,7 +118,12 @@
       curve += '<path class="curve-line past-line" d="' + smoothPath(pathPoints(forecastAnchors,now)) + '"></path>';
       curve += '<path class="forecast-line" d="' + smoothPath(future) + '"></path>';
     } else {
-      if (mode === 'personal-a' || mode === 'personal-b') {
+      if (mode === 'personal-overlay') {
+        curve += '<path class="curve-line" d="' + smoothPath(pathPoints(anchorsA,24)) + '"></path>';
+        curve += '<path class="curve-b" d="' + smoothPath(pathPoints(anchorsB,24)) + '"></path>';
+        curve += svgTag('text',{x:'875',y:'78','text-anchor':'end',class:'curve-tag'},'USER A');
+        curve += svgTag('text',{x:'875',y:'100','text-anchor':'end',class:'curve-tag curve-tag-b'},'USER B');
+      } else if (mode === 'personal-a' || mode === 'personal-b') {
         const personAnchors = mode === 'personal-a' ? anchorsA : anchorsB;
         const cls = mode === 'personal-a' ? 'curve-line' : 'curve-b';
         curve += '<path class="' + cls + '" d="' + smoothPath(pathPoints(personAnchors,24)) + '"></path>';
@@ -128,7 +133,7 @@
       }
       if (mode === 'personal-a' || mode === 'personal-b') {
         curve += svgTag('text',{x:'875',y:'78','text-anchor':'end',class:'curve-tag'},mode==='personal-a'?'S(t) · A':'S(t) · B');
-      } else if (mode !== 'feedback') {
+      } else if (mode !== 'feedback' && mode !== 'personal-overlay') {
         curve += svgTag('text',{x:'875',y:'78','text-anchor':'end',class:'curve-tag'},'S(t) · illustrative');
       }
     }
@@ -187,67 +192,33 @@
     return '<section class="scene scene-mental"><div class="mental-heading">' + sceneHead('02 — BUILDING / MENTALFLOW','一天的压力，<em>随时间建模。</em>','课程、任务、讨论、休息都落在同一条时间线上。曲线是概念示意，不是单个事件的压力打分。') + '</div><div class="mental-workspace"><div class="mental-chart-panel"><div class="chart-header"><strong>Stress × Time</strong><span class="chart-qualifier">ONE CONTINUOUS DAY</span></div>' + graphMarkup({mode:'day'}) + '<div class="chart-legend"><span><i class="legend-swatch"></i>压力状态 S(t)</span><span><i class="legend-swatch context"></i>日程上下文</span></div><div class="mental-caption">Conceptual visualization · 非实测轨迹</div></div><aside class="mental-aside"><span class="aside-index">F1 / DAY CONTEXT</span><h3>真实的一天，<br>不止日历上的事件。</h3><p>从早课到项目会议，日程为理解提供上下文。尚未被记录的生活细节，需要新的证据才能进入模型。</p><div class="aside-rule"></div><p class="aside-foot">初始日程不包含羽毛球。</p></aside></div></section>';
   }
   function sceneModel() {
-    return '<section class="scene scene-mental scene-model"><div class="mental-heading">' + sceneHead('02 — BUILDING / MODEL LENS','日程不会<em>直接变成压力。</em>','Context、Exposure、Appraisal 与 Stress 是不同层次。') + '</div><div class="model-stage"><div class="lens-backdrop">' + graphMarkup({mode:'day'}) + '</div><div class="model-lens"><div class="lens-title">MODEL LENS<small>from context to latent state</small></div><div class="lens-chain"><span>Schedule / Context</span><span>Event &amp; Realized Exposure</span><span>Personal Appraisal</span><span>Demand · Pressure · Recovery</span><span>Temporal Dynamics</span><span>A(t) + B(t)</span><span>S(t)</span></div></div><div class="lens-examples"><span><b>14:00</b> 项目讨论 → Event / Exposure → Demand · Pressure</span><span><b>12:00</b> 午饭与午休 → Recovery exposure → Temporal dynamics</span></div></div></section>';
+    return '<section class="scene scene-mental scene-model"><div class="mental-heading">' + sceneHead('02 — BUILDING / MODEL LENS','日程不会<em>直接变成压力。</em>','系统先理解发生了什么、这件事对这个人意味着什么，再判断它怎样随时间影响状态。') + '</div><div class="model-stage"><div class="model-context"><div class="chart-header"><strong>一天的真实上下文</strong><span class="chart-qualifier">CONCEPTUAL DAY</span></div>' + graphMarkup({mode:'day'}) + '<div class="model-context-note">课程、讨论与休息落在同一条时间线上</div></div><div class="model-explanation"><div class="model-explanation-head"><strong>从事件到状态</strong><span>先读懂，再建模</span></div><div class="lens-chain"><div><b>01</b><strong>发生了什么</strong><small>Context / Event</small></div><div><b>02</b><strong>实际经历了什么</strong><small>Realized Exposure</small></div><div><b>03</b><strong>这件事对个人意味着什么</strong><small>Personal Appraisal</small></div><div><b>04</b><strong>形成压力或恢复输入</strong><small>Demand / Pressure / Recovery</small></div><div><b>05</b><strong>随时间累积与回落</strong><small>Temporal Dynamics</small></div><div class="lens-result"><b>→</b><strong>当前压力状态　S(t)</strong></div></div><div class="model-route"><article class="model-route-card project-route"><b class="route-title">14:00 · 项目讨论</b><div class="route-steps"><span>发生讨论</span><i>→</i><span>实际参加</span><i>→</i><span>结合个人评价</span><i>→</i><strong>需求与压力</strong></div></article><article class="model-route-card recovery-route"><b class="route-title">12:00 · 午饭 / 午休</b><div class="route-steps"><span>安排休息</span><i>→</i><span>确实休息</span><i>→</i><span>结合个人评价</span><i>→</i><strong>恢复输入</strong></div></article></div></div></div></section>';
   }
   function profileMarkup(which) {
     const a = which === 'a';
     const values = a ? ['高','高','高'] : ['中','高','低'];
-    const states = a ? ['●','●','◐','◐'] : ['●','◐','○','○'];
-    const stateClass = a ? ['personalized','personalized','learning','learning'] : ['personalized','learning','pooled','pooled'];
-    return '<div class="profile-strip"><div class="profile-col"><strong>Stable appraisal</strong><span>课程胜任感 <b>' + values[0] + '</b></span><span>任务重要性 <b>' + values[1] + '</b></span><span>运动恢复契合 <b>' + values[2] + '</b></span></div><div class="profile-col"><strong>Personal dynamics</strong><div class="parameter-status"><i>S₀ <b class="' + stateClass[0] + '">' + states[0] + '</b></i><i>gA <b class="' + stateClass[1] + '">' + states[1] + '</b></i><i>gB <b class="' + stateClass[2] + '">' + states[2] + '</b></i><i>κ↓ <b class="' + stateClass[3] + '">' + states[3] + '</b></i></div><span class="state-key">● personalized　◐ learning　○ pooled</span></div></div>';
-  }
-  function personPanel(which) {
-    const a = which === 'a';
-    return '<article class="person-panel"><header class="person-panel-head"><h3>USER ' + (a?'A':'B') + '</h3><small>Same schedule · 08:00–24:00</small></header>' + graphMarkup({mode:a?'personal-a':'personal-b'}) + profileMarkup(which) + '</article>';
+    return '<article class="person-profile ' + (a?'person-a':'person-b') + '"><div class="person-profile-title"><h3>USER ' + (a?'A':'B') + '</h3><span>个人先验示意</span></div><div><span>课程执行胜任感</span><b>' + values[0] + '</b></div><div><span>任务个人重要性</span><b>' + values[1] + '</b></div><div><span>运动恢复适配</span><b>' + values[2] + '</b></div></article>';
   }
   function scenePeople() {
-    return '<section class="scene scene-personalization"><div class="person-head"><div>' + sceneHead('02 — BUILDING / PERSONALIZATION','同一日程，<em>不同人的轨迹。</em>','Stable appraisal 与个人动态不同，因而相同事件会形成不同的压力反应与恢复节奏。') + '</div><span class="same-schedule">SAME SCHEDULE</span></div><div class="person-comparison">' + personPanel('a') + personPanel('b') + '</div></section>';
+    return '<section class="scene scene-personalization"><div class="person-head"><div>' + sceneHead('02 — BUILDING / PERSONALIZATION','同一日程，<em>不同人的轨迹。</em>','日程相同，不代表感受相同。系统结合个人对事件的评价、历史反馈和已有证据，形成不同的预测。') + '</div></div><div class="person-shared-schedule"><b>同一日程</b><span>早课</span><i>→</i><span>午休</span><i>→</i><span>项目讨论</span><i>→</i><span>晚间作业</span><small>SHARED SCHEDULE</small></div><div class="person-comparison">' + profileMarkup('a') + profileMarkup('b') + '</div><div class="personal-overlay"><div class="personal-overlay-head"><strong>相同日程下的两条示意轨迹</strong><span>个人先验示意 · 非心理测量</span></div>' + graphMarkup({mode:'personal-overlay'}) + '<div class="personal-overlay-takeaway">同一日程　≠　同一压力轨迹</div></div></section>';
   }
   function sceneForecast() {
-    return '<section class="scene scene-forecast"><div class="mental-heading">' + sceneHead('02 — BUILDING / FORECAST','提前看到风险，<em>再判断时机。</em>','镜头聚焦 14:00–24:00。17:32，模型预测晚间风险升高；此时尚无 21:08 对话中的运动证据。') + '</div><div class="forecast-layout"><div class="forecast-card"><div class="chart-header"><strong>Past → Forecast</strong><span class="chart-qualifier">NOW · 17:32</span></div>' + graphMarkup({mode:'forecast'}) + '<div class="chart-legend"><span><i class="legend-swatch"></i>历史状态</span><span><i class="legend-swatch prediction"></i>预测与不确定区间</span></div></div><aside class="forecast-info"><span class="aside-index">CARE OPPORTUNITY</span><h3>当前情境：<br>项目会议。</h3><div class="policy-flow"><div class="policy-row"><b>1</b><span>Elevated risk ahead</span></div><div class="policy-row"><b>2</b><span>17:00–18:00 · Meeting</span></div><div class="policy-row defer"><b>3</b><span>合适时机未到 → <strong>Defer</strong></span></div></div><div class="aside-rule"></div><p>预测不是立刻打扰的理由。系统先等待更合适的支持窗口。</p></aside></div></section>';
+    return '<section class="scene scene-forecast"><div class="mental-heading">' + sceneHead('02 — BUILDING / FORECAST','提前看到风险，<em>再判断时机。</em>','17:32，模型预见晚间风险上升；它还会结合当前日程，判断是否适合发出提醒。') + '</div><div class="forecast-layout"><div class="forecast-card"><div class="chart-header"><strong>过去状态 → 未来预测</strong><span class="chart-qualifier">现在 · 17:32</span></div>' + graphMarkup({mode:'forecast'}) + '<div class="chart-legend"><span><i class="legend-swatch"></i>历史状态</span><span><i class="legend-swatch prediction"></i>预测与不确定区间</span></div></div><aside class="forecast-info"><span class="aside-index">时机判断</span><h3>现在适合打扰吗？</h3><div class="policy-flow"><div class="policy-row"><b>1</b><span>晚间风险预计上升</span></div><div class="policy-row"><b>2</b><span>17:32 · 用户仍在项目会议</span></div><div class="policy-row defer"><b>3</b><span>先不打扰，稍后重新判断 <small>defer</small></span></div></div></aside></div></section>';
   }
   function sceneCare() {
-    return '<section class="scene scene-care"><div class="mental-heading">' + sceneHead('02 — BUILDING / CARE','18:12，<em>在合适的窗口回应。</em>','关怀是一种支持机会，不是直接修改压力曲线的控制指令。') + '</div><div class="care-layout"><div class="care-card"><div class="chart-header"><strong>Stress × Time</strong><span class="chart-qualifier">CARE SENT · 18:12</span></div>' + graphMarkup({mode:'care'}) + '<div class="mental-caption">消息发出后，状态按原有动态继续演化；恢复行为尚未发生。</div></div><aside class="care-info"><span class="aside-index">LIZZY · 18:12</span><div class="care-chat"><div class="chat-time"><span>LIZZY</span><span>18:12</span></div>今天这一天排得够满的，晚上那个作业又还挂着。先别急着接着坐回去写，出去走走或者打会儿球都行——你前几次运动完状态都缓得挺快。回来再收那个作业，应该会比现在硬顶舒服点。</div></aside></div></section>';
+    return '<section class="scene scene-care"><div class="mental-heading">' + sceneHead('02 — BUILDING / CARE','18:12，<em>在合适的窗口回应。</em>','提醒发出去，并不意味着压力会因为一条消息自动下降。真正发生的休息、运动和反馈，才会成为新的证据。') + '</div><div class="care-layout"><div class="care-card"><div class="chart-header"><strong>压力状态 × 时间</strong><span class="chart-qualifier">提醒发出 · 18:12</span></div>' + graphMarkup({mode:'care'}) + '<div class="mental-caption">此时尚未发生新的恢复行为，曲线继续按原有状态演化。</div></div><aside class="care-info"><span class="aside-index">LIZZY · 18:12</span><div class="care-chat"><div class="chat-time"><span>LIZZY</span><span>18:12</span></div>今天从早课到下午讨论排得挺满，晚上那个作业还在。先别急着继续坐着硬顶，出去走走或者打会儿球都行。你前几次运动完状态都缓得挺快，回来再收尾会舒服些。</div></aside></div></section>';
   }
   function sceneFeedback() {
-    return '<section class="scene scene-feedback"><div class="mental-heading">' + sceneHead('02 — BUILDING / FEEDBACK &amp; LEARNING','真实行动与反馈，<em>继续丰富理解。</em>','21:08 的对话出现后，日历之外的羽毛球才进入当天的事件证据。') + '</div><div class="feedback-layout"><div class="feedback-card"><div class="chart-header"><strong>Stress × Time</strong><span class="chart-qualifier">20:30–21:00 · RECOVERY</span></div>' + graphMarkup({mode:'feedback'}) + '<div class="chart-legend feedback-legend"><span><i class="legend-swatch prior"></i>反馈前估计</span><span><i class="legend-swatch updated"></i>加入反馈后的更新示意</span></div><div class="mental-caption">21:08 对话确认后，恢复事件与平滑回落才进入示意轨迹。</div></div><aside class="feedback-info"><span class="aside-index">YOU + LIZZY · 21:08</span><div class="feedback-chat"><div class="chat-bubble user"><header><span>YOU</span><span>21:08</span></header>刚刚和室友打了<span class="evidence-source" data-evidence-source>半小时羽毛球</span>，<span class="evidence-source" data-evidence-source>舒服多了</span>，今天真的累坏了</div><div class="chat-bubble"><header><span>LIZZY</span><span>21:09</span></header>这半小时球算是打值了。你今天从上午的课一路排到下午讨论，确实够折腾的。现在缓过来一点就行，剩下那个作业慢慢收，别刚舒服点又把自己塞满了。</div></div><div class="feedback-evidence"><span>Episode Evidence</span><b>→</b><strong>Long-term understanding +</strong></div></aside></div><div class="closure-loop"><span>UNDERSTAND</span><i>→</i><span>MODEL</span><i>→</i><span>FORECAST</span><i>→</i><span>SUPPORT</span><i>→</i><strong>LEARN</strong><i>↺</i></div></section>';
+    return '<section class="scene scene-feedback"><div class="mental-heading">' + sceneHead('02 — BUILDING / FEEDBACK &amp; LEARNING','真实行动与反馈，<em>继续丰富理解。</em>','一次反馈不会立刻重写长期画像；它会成为新证据，帮助系统逐步理解这个人。') + '</div><div class="feedback-layout"><div class="feedback-card"><div class="chart-header"><strong>压力状态 × 时间</strong><span class="chart-qualifier">20:30–21:00 · 运动恢复</span></div>' + graphMarkup({mode:'feedback'}) + '<div class="chart-legend feedback-legend"><span><i class="legend-swatch prior"></i>反馈前估计</span><span><i class="legend-swatch updated"></i>加入反馈后的更新示意</span></div><div class="mental-caption">21:08 对话确认后，运动与平滑回落才进入示意轨迹。</div></div><aside class="feedback-info"><span class="aside-index">你 + LIZZY · 21:08</span><div class="feedback-chat"><div class="chat-bubble user"><header><span>你</span><span>21:08</span></header>刚刚和室友打了<span class="evidence-source" data-evidence-source>半小时羽毛球</span>，<span class="evidence-source" data-evidence-source>舒服多了</span>，今天真的累坏了。</div><div class="chat-bubble"><header><span>LIZZY</span><span>21:09</span></header>看来这半小时挺值得。今天从早课到下午讨论确实不轻松，先缓一缓，作业晚点再收尾也行。</div></div><div class="feedback-evidence"><span>这次反馈</span><b>→</b><strong>成为以后判断的一条新证据</strong><small>episode evidence</small></div></aside></div><div class="closure-loop"><span>理解</span><i>→</i><span>建模</span><i>→</i><span>预测</span><i>→</i><span>支持</span><i>→</i><strong>学习</strong><i>↺</i></div></section>';
   }
   function sceneResearchIntro() {
-    return '<section class="scene scene-research-intro"><div class="adaptation-line"><span>LEARN OVER TIME</span><i></i><strong>ADAPTATION</strong><i></i><span>DIFFERENT PEOPLE</span></div><p class="scene-kicker">03 — RESEARCHING</p><h1 class="scene-title">模型如何在变化中<br><em>继续学习？</em></h1><p class="scene-lead">从 MentalFlow 对长期适应的关注，延伸到一个更一般的问题：任务不断变化时，模型如何学习新知识并保留旧能力？</p></section>';
+    return '<section class="scene scene-research-intro"><div class="research-intro-transition"><span>LEARN</span><i>→</i><strong>LEARN OVER TIME</strong></div><p class="scene-kicker">03 — RESEARCHING / CONTINUAL LEARNING</p><h1 class="scene-title">如果任务一直变化，<br><em>模型还能一直学下去吗？</em></h1><p class="scene-lead">MentalFlow 的学习回路让我开始追问：任务持续变化时，模型怎样学会新的，同时尽量保留旧能力？</p></section>';
   }
-  function probe(name, key) {
-    return '<div class="probe" data-probe="' + key + '"><strong>' + name + '</strong><span class="probe-dots"><i>○</i><i>○</i><i>○</i><i>○</i></span></div>';
+  function sceneCLForgetting() {
+    return '<section class="scene cl-scene cl-forgetting"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / CONTINUAL LEARNING</p><h2>学会新的，<em>却把旧的忘了。</em></h2><p>同一个模型先学习旧任务，再继续学习新任务；新任务表现上升时，旧任务可能退步。</p></div></header><div class="cl-story"><div class="cl-task-sequence"><span class="board-label">任务依次到来</span><div class="cl-task-chip task-a-chip"><b>A</b><span>旧任务</span></div><i>→</i><div class="cl-task-chip task-b-chip"><b>B</b><span>新任务</span></div></div><div class="cl-model-token"><div class="model-parameter-glyph">' + new Array(12).fill('<i></i>').join('') + '</div><strong>同一个模型 <em>θ</em></strong><small>持续更新参数</small></div><div class="cl-performance"><span class="board-label">任务表现 · 定性示意</span><div class="performance-row old-task"><b>旧任务 A</b><div class="performance-track"><i></i></div></div><div class="performance-row new-task"><b>新任务 B</b><div class="performance-track"><i></i></div></div><div class="forgetting-reveal"><strong>灾难性遗忘</strong><span>学会新任务，却失去部分旧能力。</span></div></div></div><div class="cl-footline"><span>概念示意，不代表实验数据</span><span>Task A → Task B</span></div></section>';
   }
-  function clBoardMarkup(step) {
-    let className = 'cl-board';
-    if (step === 'task-b') className += ' task-b-state';
-    if (step === 'branch') className += ' branch-state';
-    if (step === 'strategies') className += ' strategy-state';
-    if (step === 'stream') className += ' stream-state';
-    const taskActive = step === 'task-a' ? 'a' : step === 'task-b' ? 'b' : step === 'stream' ? 'c' : '';
-    const cells = new Array(54).fill(0).map((_, i) => '<i class="parameter-cell tone-0" data-cell="' + i + '"></i>').join('');
-    return '<div class="' + className + '" id="cl-board" data-step="' + step + '">' +
-      '<div class="task-stream"><span class="board-label">TASK STREAM</span>' +
-      '<article class="task-tray ' + (taskActive==='a'?'is-active':'') + '" data-tray="a"><h3>Task A</h3><div class="samples"><span>○</span><span>△</span><span>○</span><span>△</span><span>△</span><span>○</span><span>△</span><span>○</span></div><small>conceptual samples</small></article>' +
-      '<article class="task-tray ' + (taskActive==='b'?'is-active':'') + '" data-tray="b"><h3>Task B</h3><div class="samples task-b"><span>□</span><span>◇</span><span>□</span><span>◇</span><span>◇</span><span>□</span><span>◇</span><span>□</span></div><small>new task</small></article>' +
-      '<article class="task-tray ' + (taskActive==='c'?'is-active':'') + '" data-tray="c"><h3>Task C</h3><div class="samples task-c"><span>☆</span><span>＋</span><span>☆</span><span>＋</span><span>＋</span><span>☆</span><span>＋</span><span>☆</span></div><small>next in stream</small></article></div>' +
-      '<div class="parameter-board"><div class="theta-head"><span class="board-label">ONE SHARED MODEL</span><strong>θ</strong></div><div class="parameter-field">' + cells + '</div><div class="parameter-meta"><span>parameter state · conceptual</span><span data-theta-caption>θ learns Task A</span></div><span class="previous-theta">previous θ<sub>A</sub></span></div>' +
-      '<div class="evaluation"><span class="board-label">QUALITATIVE PROBES</span>' + probe('Task A','a') + probe('Task B','b') + probe('Task C','c') + '<span class="qualitative-note">○ low　 ◐ partial　 ● retained</span><div class="forgetting-callout"><strong>CATASTROPHIC FORGETTING</strong><p>新任务变好，旧任务能力可能退化。</p></div></div>' +
-      '<div class="branch-workspace"><div class="branch-label">SAME STARTING MODEL · θ<sub>A</sub></div><div class="branch-compare"><article class="branch-lane"><h3>NAIVE FINE-TUNING</h3><div class="branch-row">OLD TASK <b class="decline">↓</b></div><div class="branch-row">NEW TASK <b>↑</b></div></article><article class="branch-lane cl-lane"><h3>CONTINUAL LEARNING</h3><div class="branch-row">OLD TASK <b>retain</b></div><div class="branch-row">NEW TASK <b>↑</b></div></article></div></div>' +
-      '<div class="strategy-space"><span>Regularization</span><span>Knowledge Distillation</span><span>Replay / Exemplars</span><span>Constraint-based</span></div>' +
-      '<div class="stream-sequence">Task A · retained　　Task B · retained　　Task C · learning…<br>Task D → Task E → …　　TIME ───────────────────→</div>' +
-      '</div>';
-  }
-  function sceneCL(id) {
-    const definitions = {
-      'cl-task-a': ['Task A：同一个模型，开始学习。','Task batch 进入参数工作区，Task A 的定性探针随训练逐步提升。','task-a'],
-      'cl-task-b': ['Task B：学习新任务，旧能力可能退化。','仍然更新同一个 θ。新任务探针上升时，Task A 探针逐步回落。','task-b'],
-      'cl-branch': ['从相同 θA 出发，分成两条路径。','比较目标而非胜负：朴素微调可能遗忘旧任务；持续学习尝试兼顾新旧能力。','branch'],
-      'cl-strategies': ['持续学习，有多种策略空间。','这些是方法方向，不是固定 pipeline；Continual Learning 也不等同于某一种方法。','strategies'],
-      'cl-stream': ['任务继续到来，问题也继续。','从 Task C 到后续任务，模型在长期任务流中不断适应。','stream'],
-    };
-    const info = definitions[id];
-    return '<section class="scene cl-scene" data-cl-scene="' + info[2] + '"><header class="cl-scene-head"><h2>' + info[0] + '</h2><p>' + info[1] + '</p></header>' + clBoardMarkup(info[2]) + '<div class="cl-footline"><span>CONCEPTUAL TASK STREAM · NOT EXPERIMENTAL DATA</span><span data-training-caption>同一个 θ · 定性状态</span></div></section>';
+  function sceneCLObjective() {
+    return '<section class="scene cl-scene cl-objective"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / THE GOAL</p><h2>持续学习：<em>学新的，也尽量保住旧的。</em></h2><p>从同一个初始模型出发，比较“只学新任务”和“兼顾新旧能力”这两种结果。</p></div></header><div class="objective-start"><span>同一起点</span><strong>θ<sub>A</sub></strong><i>↘</i><i>↗</i></div><div class="objective-comparison"><article class="objective-card ordinary-card"><h3>继续训练</h3><p>新任务学会了，旧能力却明显下降。</p><div class="performance-row"><b>旧任务 A</b><div class="performance-track"><i class="quality-low"></i></div></div><div class="performance-row"><b>新任务 B</b><div class="performance-track"><i class="quality-high"></i></div></div></article><article class="objective-card continual-card"><h3>持续学习</h3><p>学习新任务的同时，尽量保留旧能力。</p><div class="performance-row"><b>旧任务 A</b><div class="performance-track"><i class="quality-retained"></i></div></div><div class="performance-row"><b>新任务 B</b><div class="performance-track"><i class="quality-high"></i></div></div></article></div><div class="long-task-stream"><span>A</span><i>→</i><span>B</span><i>→</i><strong>C</strong><i>→</i><span>后续任务…</span><small>TIME →</small></div><div class="cl-footline"><span>定性示意，不表示方法优劣或实验结果</span><span>持续学习关注：学新与保旧</span></div></section>';
   }
   function scenePaper(camera) {
     const info = {
@@ -266,9 +237,6 @@
       '</div></div>' +
       (camera==='overview'?'<div class="paper-process"><span>阅读</span><i>→</i><span>理解</span><i>→</i><span>重构</span><i>→</i><span>交互解释</span><small>学习路径：LwF · EWC · iCaRL · GEM · …</small></div>':'') +
       '</section>';
-  }
-  function scenePath() {
-    return '<section class="scene scene-path"><p class="scene-kicker">CONTINUAL LEARNING · LEARNING PATH</p><h1 class="path-title">持续深入，<em>仍在继续。</em></h1><div class="learning-path"><span>LwF</span><i></i><span>EWC</span><i></i><span>iCaRL</span><i></i><span>GEM</span><i></i><span class="ongoing">…</span></div><p class="path-subtitle">个人学习路径，不代表论文发表时间线或已完成研究。</p></section>';
   }
   function sceneAdaptation() {
     return '<section class="scene scene-adaptation"><div class="adaptation-axes"><span class="axis-y-label">DIFFERENT PEOPLE</span><span class="axis-x-label">CHANGING TASKS / DATA <b>→</b></span><span class="axis-person-label axis-person-a">USER A</span><span class="axis-person-label axis-person-b">USER B</span><span class="axis-person-label axis-person-c">USER C</span><span class="axis-stream axis-stream-a"></span><span class="axis-stream axis-stream-b"></span><div class="axis-core"><strong>ADAPTATION</strong><small>Adapt over time × Adapt across people</small></div></div><div class="adaptation-summary"><p class="scene-kicker">ONE QUESTION · TWO DIRECTIONS</p><h2>适应变化，<br>也适应不同的人。</h2><p>持续学习关注跨时间与任务的适应；个性化关注不同个体。两者共同指向智能系统如何在长期使用中持续调整。</p><div class="adaptation-equation"><strong>CONTINUAL LEARNING</strong> · Adapt over time<br><strong>PERSONALIZATION</strong> · Adapt across people</div></div></section>';
@@ -319,16 +287,12 @@
     { id:'mental-care', chapter:'BUILDING', render:sceneCare },
     { id:'mental-feedback', chapter:'BUILDING', render:sceneFeedback },
     { id:'research-intro', chapter:'RESEARCHING', render:sceneResearchIntro },
-    { id:'cl-task-a', chapter:'RESEARCHING', render:() => sceneCL('cl-task-a') },
-    { id:'cl-task-b', chapter:'RESEARCHING', render:() => sceneCL('cl-task-b') },
-    { id:'cl-branch', chapter:'RESEARCHING', render:() => sceneCL('cl-branch') },
-    { id:'cl-strategies', chapter:'RESEARCHING', render:() => sceneCL('cl-strategies') },
-    { id:'cl-stream', chapter:'RESEARCHING', render:() => sceneCL('cl-stream') },
+    { id:'cl-forgetting', chapter:'RESEARCHING', render:sceneCLForgetting },
+    { id:'cl-objective', chapter:'RESEARCHING', render:sceneCLObjective },
     { id:'paper-ewc', chapter:'RESEARCHING', render:() => scenePaper('ewc') },
     { id:'paper-lwf', chapter:'RESEARCHING', render:() => scenePaper('lwf') },
     { id:'paper-icarl', chapter:'RESEARCHING', render:() => scenePaper('icarl') },
     { id:'paper-overview', chapter:'RESEARCHING', render:() => scenePaper('overview') },
-    { id:'learning-path', chapter:'RESEARCHING', render:scenePath },
     { id:'adaptation', chapter:'RESEARCHING', render:sceneAdaptation },
   ];
   const container = document.getElementById('scene-container');
@@ -338,8 +302,8 @@
   const previous = document.getElementById('previous-scene');
   const next = document.getElementById('next-scene');
   let currentIndex = 0;
-  let animationFrame = 0;
   let lastWheel = 0;
+  if (new URLSearchParams(window.location.search).get('record') === '1') document.body.classList.add('recording-mode');
   totalNode.textContent = String(scenes.length).padStart(2,'0');
 
   function setChapter(chapter) {
@@ -349,94 +313,6 @@
       if (active) button.setAttribute('aria-current','step');
       else button.removeAttribute('aria-current');
     });
-  }
-  function stopAnimation() {
-    if (animationFrame) cancelAnimationFrame(animationFrame);
-    animationFrame = 0;
-  }
-  function setDots(row, count, warningCount) {
-    if (!row) return;
-    const stateKey = count + '-' + warningCount;
-    if (row.dataset.state === stateKey) return;
-    row.dataset.state = stateKey;
-    row.querySelectorAll('.probe-dots i').forEach((dot,index) => {
-      dot.className = '';
-      if (index < warningCount) { dot.textContent = '◐'; dot.classList.add('fading'); }
-      else if (index < count) { dot.textContent = '●'; dot.classList.add('full'); }
-      else if (index === count && count < 4) { dot.textContent = '◐'; dot.classList.add('partial'); }
-      else dot.textContent = '○';
-    });
-  }
-  function setParameterProgress(board, progress, previousState) {
-    const cells = board.querySelectorAll('.parameter-cell');
-    cells.forEach((cell,index) => {
-      const threshold = index / cells.length;
-      const baseTone = previousState ? ((index * 2 + 1) % 4) : 0;
-      const updateTone = (index * 3 + (previousState ? 2 : 1)) % 4;
-      const changed = progress > threshold;
-      const nextState = changed ? 'updated-' + updateTone : 'base-' + baseTone;
-      if (cell.dataset.state === nextState) return;
-      cell.dataset.state = nextState;
-      cell.className = 'parameter-cell tone-' + (changed ? updateTone : baseTone) + (changed ? ' is-updating' : '');
-    });
-  }
-  function animateCL(id) {
-    const board = document.getElementById('cl-board');
-    if (!board || (id !== 'cl-task-a' && id !== 'cl-task-b')) return;
-    const isTaskB = id === 'cl-task-b';
-    const startTime = performance.now();
-    const duration = isTaskB ? 3100 : 2500;
-    const rowA = board.querySelector('[data-probe="a"]');
-    const rowB = board.querySelector('[data-probe="b"]');
-    const rowC = board.querySelector('[data-probe="c"]');
-    const caption = document.querySelector('[data-training-caption]');
-    const thetaCaption = board.querySelector('[data-theta-caption]');
-    function tick(now) {
-      const progress = Math.min(1,(now-startTime)/duration);
-      setParameterProgress(board,progress,isTaskB);
-      if (isTaskB) {
-        const newLearned = Math.min(4,Math.floor(progress*4.2));
-        const oldRemaining = Math.max(0,4-Math.floor(progress*4.1));
-        const oldWarning = progress < .2 ? 0 : progress < .45 ? 1 : progress < .68 ? 2 : 3;
-        setDots(rowA,oldRemaining,oldWarning);
-        setDots(rowB,newLearned,0);
-        if (caption) caption.textContent = progress < .8 ? 'Task B updates θ · Task B rises as Task A fades' : '先看到新旧任务变化，再出现遗忘概念';
-        if (thetaCaption) thetaCaption.textContent = progress < .5 ? 'Task B batch → same θ' : 'shared parameters continue to update';
-        if (progress > .86) board.classList.add('forgetting-done');
-      } else {
-        const learned = Math.min(4,Math.floor(progress*4.3));
-        setDots(rowA,learned,0);
-        setDots(rowB,0,0);
-        if (caption) caption.textContent = progress < .52 ? 'Batch 1 · 参数局部更新' : 'Batch 2 · Task A probe continues to improve';
-        if (thetaCaption) thetaCaption.textContent = progress < .5 ? 'Task A batch 1 → θ' : 'Task A batch 2 → θ';
-      }
-      setDots(rowC,0,0);
-      if (progress < 1) animationFrame = requestAnimationFrame(tick);
-      else animationFrame = 0;
-    }
-    animationFrame = requestAnimationFrame(tick);
-  }
-  function animateBranch() {
-    const board = document.getElementById('cl-board');
-    if (!board) return;
-    const cells = [...board.querySelectorAll('.parameter-cell')];
-    cells.forEach((cell,index) => {
-      cell.className = 'parameter-cell tone-' + ((index*3+2)%4);
-      cell.dataset.branchState = 'current';
-    });
-    const startTime = performance.now();
-    function tick(now) {
-      const progress = Math.min(1,(now-startTime)/620);
-      cells.forEach((cell,index) => {
-        if (progress >= index/cells.length && cell.dataset.branchState !== 'theta-a') {
-          cell.dataset.branchState = 'theta-a';
-          cell.className = 'parameter-cell tone-' + ((index*2+1)%4) + ' is-updating';
-        }
-      });
-      if (progress < 1) animationFrame = requestAnimationFrame(tick);
-      else animationFrame = 0;
-    }
-    animationFrame = requestAnimationFrame(tick);
   }
   function flyEvidence() {
     const sourceNodes = [...document.querySelectorAll('[data-evidence-source]')];
@@ -505,7 +381,6 @@
     });
   }
   function render(index) {
-    stopAnimation();
     currentIndex = Math.max(0,Math.min(scenes.length-1,index));
     const scene = scenes[currentIndex];
     container.innerHTML = scene.render();
@@ -516,8 +391,6 @@
     previous.disabled = currentIndex === 0;
     next.disabled = currentIndex === scenes.length-1;
     setChapter(scene.chapter);
-    if (scene.id === 'cl-task-a' || scene.id === 'cl-task-b') animateCL(scene.id);
-    if (scene.id === 'cl-branch') animateBranch();
     if (scene.id === 'mental-feedback') requestAnimationFrame(flyEvidence);
   }
   function advance(direction) {
@@ -534,7 +407,9 @@
   });
   window.addEventListener('keydown',(event) => {
     if (event.repeat) return;
-    if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
+    if (event.key.toLowerCase() === 'h') {
+      document.body.classList.toggle('recording-mode');
+    } else if (event.key === 'ArrowRight' || event.key === 'PageDown' || event.key === ' ') {
       event.preventDefault(); advance(1);
     } else if (event.key === 'ArrowLeft' || event.key === 'PageUp') {
       event.preventDefault(); advance(-1);
