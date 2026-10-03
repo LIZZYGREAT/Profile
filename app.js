@@ -15,20 +15,31 @@
   const anchorsA = [[8,.24],[8.7,.38],[9.6,.57],[9.9,.46],[10.5,.5],[11.65,.66],[12,.55],[12.45,.39],[13,.3],[14,.5],[15.1,.45],[15.55,.58],[16.6,.67],[17.2,.75],[18.05,.74],[18.65,.72],[19.4,.73],[20.45,.74],[20.8,.76],[21.3,.72],[22,.69],[22.6,.73],[23.5,.81],[23.98,.86]];
   const anchorsB = [[8,.42],[8.7,.53],[9.6,.72],[9.9,.62],[10.5,.66],[11.65,.81],[12,.73],[12.45,.66],[13,.56],[14,.69],[15.1,.64],[15.55,.74],[16.6,.8],[17.2,.86],[18.05,.84],[18.65,.82],[19.4,.83],[20.45,.84],[20.8,.85],[21.3,.82],[22,.79],[22.6,.82],[23.5,.87],[23.98,.91]];
   const careCurve = [[8,.24],[8.7,.38],[9.6,.57],[9.9,.46],[10.5,.5],[11.65,.66],[12,.55],[12.45,.39],[13,.3],[14,.5],[15.1,.45],[15.55,.58],[16.6,.67],[17.2,.75],[18.05,.74],[18.2,.74],[18.65,.74],[19.4,.75],[20.45,.77],[20.8,.8],[21.3,.78],[22,.76],[22.6,.79],[23.5,.84],[23.98,.88]];
-  const recoveryCurve = [[8,.24],[8.7,.38],[9.6,.57],[9.9,.46],[10.5,.5],[11.65,.66],[12,.55],[12.45,.39],[13,.3],[14,.5],[15.1,.45],[15.55,.58],[16.6,.67],[17.2,.75],[18.05,.74],[18.2,.74],[18.65,.74],[19.4,.75],[20.45,.77],[20.72,.68],[21.05,.5],[21.4,.46],[22,.46],[22.6,.54],[23.5,.72],[23.98,.82]];
+  const recoveryCurve = [[8,.24],[8.7,.38],[9.6,.57],[9.9,.46],[10.5,.5],[11.65,.66],[12,.55],[12.45,.39],[13,.3],[14,.5],[15.1,.45],[15.55,.58],[16.6,.67],[17.2,.75],[18.05,.74],[18.2,.74],[18.65,.74],[19.4,.75],[20.3,.76],[20.5,.76],[20.67,.75],[20.83,.73],[21,.70],[21.17,.67],[21.33,.64],[21.5,.61],[21.75,.58],[22,.56],[22.5,.57],[23,.63],[23.5,.72],[23.98,.82]];
 
   function smoothPath(points) {
     if (points.length < 2) return '';
     let d = 'M ' + points[0][0].toFixed(1) + ' ' + points[0][1].toFixed(1);
+    const tangent = (index) => {
+      if (index === 0) return (points[1][1] - points[0][1]) / (points[1][0] - points[0][0]);
+      if (index === points.length - 1) return (points[index][1] - points[index-1][1]) / (points[index][0] - points[index-1][0]);
+      const left = (points[index][1] - points[index-1][1]) / (points[index][0] - points[index-1][0]);
+      const right = (points[index+1][1] - points[index][1]) / (points[index+1][0] - points[index][0]);
+      if (left === 0 || right === 0 || Math.sign(left) !== Math.sign(right)) return 0;
+      const leftWidth = points[index][0] - points[index-1][0];
+      const rightWidth = points[index+1][0] - points[index][0];
+      const w1 = 2*rightWidth + leftWidth;
+      const w2 = rightWidth + 2*leftWidth;
+      return (w1+w2)/(w1/left+w2/right);
+    };
     for (let i = 0; i < points.length - 1; i++) {
-      const p0 = points[Math.max(0, i - 1)];
       const p1 = points[i];
       const p2 = points[i + 1];
-      const p3 = points[Math.min(points.length - 1, i + 2)];
-      const c1x = p1[0] + (p2[0] - p0[0]) / 6;
-      const c1y = p1[1] + (p2[1] - p0[1]) / 6;
-      const c2x = p2[0] - (p3[0] - p1[0]) / 6;
-      const c2y = p2[1] - (p3[1] - p1[1]) / 6;
+      const width = p2[0] - p1[0];
+      const c1x = p1[0] + width/3;
+      const c1y = p1[1] + tangent(i)*width/3;
+      const c2x = p2[0] - width/3;
+      const c2y = p2[1] - tangent(i+1)*width/3;
       d += ' C ' + c1x.toFixed(1) + ' ' + c1y.toFixed(1) + ', ' + c2x.toFixed(1) + ' ' + c2y.toFixed(1) + ', ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1);
     }
     return d;
@@ -67,7 +78,8 @@
       const x = mapX(event.start), width = mapX(event.end) - x;
       bands += '<rect class="' + bandTypes[event.kind] + '" x="' + x.toFixed(1) + '" y="62" width="' + width.toFixed(1) + '" height="242" opacity=".54" rx="2"></rect>';
       bands += '<line x1="' + x.toFixed(1) + '" y1="62" x2="' + x.toFixed(1) + '" y2="304" stroke="#99b4a2" stroke-width="1" opacity=".55"></line>';
-      bands += svgTag('text',{x:(x+width/2).toFixed(1),y:event.kind==='recovery'?'326':'55','text-anchor':'middle',class:'band-label'},event.label);
+      const labelClass = mode === 'forecast' && event.label === '项目会议' ? 'band-label current-event-label' : 'band-label';
+      bands += svgTag('text',{x:(x+width/2).toFixed(1),y:event.kind==='recovery'?'326':'55','text-anchor':'middle',class:labelClass},event.label);
     });
     if (includeBadminton) {
       const x = mapX(20.5), width = mapX(21) - x;
@@ -90,11 +102,12 @@
     });
     grid += svgTag('text',{x:'8',y:'98',class:'axis-caption'},'较高');
     grid += svgTag('text',{x:'8',y:'298',class:'axis-caption'},'较低');
+    const forecastAnchors = [[8,.24],[8.7,.38],[9.6,.57],[9.9,.46],[10.5,.5],[11.65,.66],[12,.55],[12.45,.39],[13,.3],[14,.5],[15.1,.45],[15.55,.58],[16.6,.67],[17.2,.75],[18.05,.74],[18.7,.68],[19.4,.66],[20,.69],[20.6,.73],[21.2,.77],[22,.82],[23,.87],[23.98,.89]];
     const anchors = mode === 'care' || mode === 'feedback' ? careCurve : anchorsA;
     let curve = '';
     if (mode === 'forecast') {
-      const now = 17.533, nx = mapX(now), ny = mapY(interpolate(anchorsA, now));
-      const future = pathPoints(anchorsA,24).filter((p) => p[0] >= nx);
+      const now = 17.533, nx = mapX(now), ny = mapY(interpolate(forecastAnchors, now));
+      const future = pathPoints(forecastAnchors,24).filter((p) => p[0] >= nx);
       const upper = future.map((p) => p[0] + ' ' + (p[1] - 18)).join(' L ');
       const lower = future.slice().reverse().map((p) => p[0] + ' ' + (p[1] + 22)).join(' L ');
       curve += '<path class="uncertainty" d="M ' + nx + ' ' + (ny-14) + ' L ' + upper + ' L ' + lower + ' L ' + nx + ' ' + (ny+14) + ' Z"></path>';
@@ -102,7 +115,7 @@
       curve += svgTag('text',{x:mapX(20),y:String(mapY(.77)-12),'text-anchor':'end',class:'axis-caption'},'Risk threshold');
       curve += '<line class="now-line" x1="' + nx + '" y1="48" x2="' + nx + '" y2="304"></line>';
       curve += svgTag('text',{x:nx+7,y:'43',class:'annotation'},'17:32 · Elevated risk ahead');
-      curve += '<path class="curve-line past-line" d="' + smoothPath(pathPoints(anchorsA,now)) + '"></path>';
+      curve += '<path class="curve-line past-line" d="' + smoothPath(pathPoints(forecastAnchors,now)) + '"></path>';
       curve += '<path class="forecast-line" d="' + smoothPath(future) + '"></path>';
     } else {
       if (mode === 'personal-a' || mode === 'personal-b') {
@@ -110,7 +123,8 @@
         const cls = mode === 'personal-a' ? 'curve-line' : 'curve-b';
         curve += '<path class="' + cls + '" d="' + smoothPath(pathPoints(personAnchors,24)) + '"></path>';
       } else {
-        curve += '<path data-stress-path class="curve-line" d="' + smoothPath(pathPoints(anchors,24)) + '"></path>';
+        const feedbackClass = mode === 'feedback' ? 'curve-line prior-estimate' : 'curve-line';
+        curve += '<path data-stress-path class="' + feedbackClass + '" d="' + smoothPath(pathPoints(anchors,24)) + '"></path>';
       }
       if (mode === 'personal-a' || mode === 'personal-b') {
         curve += svgTag('text',{x:'875',y:'78','text-anchor':'end',class:'curve-tag'},mode==='personal-a'?'S(t) · A':'S(t) · B');
@@ -196,7 +210,7 @@
     return '<section class="scene scene-care"><div class="mental-heading">' + sceneHead('02 — BUILDING / CARE','18:12，<em>在合适的窗口回应。</em>','关怀是一种支持机会，不是直接修改压力曲线的控制指令。') + '</div><div class="care-layout"><div class="care-card"><div class="chart-header"><strong>Stress × Time</strong><span class="chart-qualifier">CARE SENT · 18:12</span></div>' + graphMarkup({mode:'care'}) + '<div class="mental-caption">消息发出后，状态按原有动态继续演化；恢复行为尚未发生。</div></div><aside class="care-info"><span class="aside-index">LIZZY · 18:12</span><div class="care-chat"><div class="chat-time"><span>LIZZY</span><span>18:12</span></div>今天这一天排得够满的，晚上那个作业又还挂着。先别急着接着坐回去写，出去走走或者打会儿球都行——你前几次运动完状态都缓得挺快。回来再收那个作业，应该会比现在硬顶舒服点。</div></aside></div></section>';
   }
   function sceneFeedback() {
-    return '<section class="scene scene-feedback"><div class="mental-heading">' + sceneHead('02 — BUILDING / FEEDBACK &amp; LEARNING','真实行动与反馈，<em>继续丰富理解。</em>','21:08 的对话出现后，日历之外的羽毛球才进入当天的事件证据。') + '</div><div class="feedback-layout"><div class="feedback-card"><div class="chart-header"><strong>Stress × Time</strong><span class="chart-qualifier">20:30–21:00 · RECOVERY</span></div>' + graphMarkup({mode:'feedback'}) + '<div class="mental-caption">21:08 对话确认后，恢复事件与平滑回落才进入示意轨迹。</div></div><aside class="feedback-info"><span class="aside-index">YOU + LIZZY · 21:08</span><div class="feedback-chat"><div class="chat-bubble user"><header><span>YOU</span><span>21:08</span></header>刚刚和室友打了<span class="evidence-source" data-evidence-source>半小时羽毛球</span>，<span class="evidence-source" data-evidence-source>舒服多了</span>，今天真的累坏了</div><div class="chat-bubble"><header><span>LIZZY</span><span>21:09</span></header>这半小时球算是打值了。你今天从上午的课一路排到下午讨论，确实够折腾的。现在缓过来一点就行，剩下那个作业慢慢收，别刚舒服点又把自己塞满了。</div></div><div class="feedback-evidence"><span>Episode Evidence</span><b>→</b><strong>Long-term understanding +</strong></div></aside></div><div class="closure-loop"><span>UNDERSTAND</span><i>→</i><span>MODEL</span><i>→</i><span>FORECAST</span><i>→</i><span>SUPPORT</span><i>→</i><strong>LEARN</strong><i>↺</i></div></section>';
+    return '<section class="scene scene-feedback"><div class="mental-heading">' + sceneHead('02 — BUILDING / FEEDBACK &amp; LEARNING','真实行动与反馈，<em>继续丰富理解。</em>','21:08 的对话出现后，日历之外的羽毛球才进入当天的事件证据。') + '</div><div class="feedback-layout"><div class="feedback-card"><div class="chart-header"><strong>Stress × Time</strong><span class="chart-qualifier">20:30–21:00 · RECOVERY</span></div>' + graphMarkup({mode:'feedback'}) + '<div class="chart-legend feedback-legend"><span><i class="legend-swatch prior"></i>反馈前估计</span><span><i class="legend-swatch updated"></i>加入反馈后的更新示意</span></div><div class="mental-caption">21:08 对话确认后，恢复事件与平滑回落才进入示意轨迹。</div></div><aside class="feedback-info"><span class="aside-index">YOU + LIZZY · 21:08</span><div class="feedback-chat"><div class="chat-bubble user"><header><span>YOU</span><span>21:08</span></header>刚刚和室友打了<span class="evidence-source" data-evidence-source>半小时羽毛球</span>，<span class="evidence-source" data-evidence-source>舒服多了</span>，今天真的累坏了</div><div class="chat-bubble"><header><span>LIZZY</span><span>21:09</span></header>这半小时球算是打值了。你今天从上午的课一路排到下午讨论，确实够折腾的。现在缓过来一点就行，剩下那个作业慢慢收，别刚舒服点又把自己塞满了。</div></div><div class="feedback-evidence"><span>Episode Evidence</span><b>→</b><strong>Long-term understanding +</strong></div></aside></div><div class="closure-loop"><span>UNDERSTAND</span><i>→</i><span>MODEL</span><i>→</i><span>FORECAST</span><i>→</i><span>SUPPORT</span><i>→</i><strong>LEARN</strong><i>↺</i></div></section>';
   }
   function sceneResearchIntro() {
     return '<section class="scene scene-research-intro"><div class="adaptation-line"><span>LEARN OVER TIME</span><i></i><strong>ADAPTATION</strong><i></i><span>DIFFERENT PEOPLE</span></div><p class="scene-kicker">03 — RESEARCHING</p><h1 class="scene-title">模型如何在变化中<br><em>继续学习？</em></h1><p class="scene-lead">从 MentalFlow 对长期适应的关注，延伸到一个更一般的问题：任务不断变化时，模型如何学习新知识并保留旧能力？</p></section>';
@@ -237,21 +251,20 @@
   }
   function scenePaper(camera) {
     const info = {
-      ewc:['EWC','Parameter importance'],
-      lwf:['LwF','Knowledge distillation'],
-      icarl:['iCaRL','Exemplar memory'],
-      overview:['阅读 → 重构 → 交互解释','Continual Learning · interactive learning work'],
+      ewc:['EWC','保护重要参数','Parameter importance'],
+      lwf:['LwF','保留旧模型的响应','Knowledge distillation'],
+      icarl:['iCaRL','保留代表样本','Exemplar memory'],
+      overview:['MY RESEARCH WORK','我把论文流程与关键机制重新做成交互式网页。','阅读 → 理解 → 重构 → 交互解释'],
     }[camera];
     return '<section class="scene scene-paper" data-camera="overview" data-target-camera="' + camera + '">' +
       '<div class="paper-title"><span>RESEARCH WORKSPACE</span><strong>' + info[0] + '</strong></div>' +
-      (camera==='ewc'?'<div class="morph-overlay"><span><b>TASK A / B</b>Task stream</span><span><b>MODEL θ</b>shared parameter state</span><span><b>STATE</b>memory &amp; math</span></div>':'') +
-      '<div class="paper-caption"><strong>' + info[0] + '</strong><span>' + info[1] + '</span></div>' +
+      '<div class="paper-caption"><strong>' + info[1] + '</strong><span>' + info[2] + '</span></div>' +
       '<div class="paper-camera"><div class="paper-world">' +
-      '<img class="paper-canvas paper-ewc" src="assets/ewc.png" alt="EWC 持续学习可视化实验室原始页面截图">' +
-      '<img class="paper-canvas paper-lwf" src="assets/lwf.png" alt="LwF 交互式论文解释原始页面截图">' +
-      '<img class="paper-canvas paper-icarl" src="assets/icarl.png" alt="iCaRL 交互式论文解释原始页面截图">' +
+      '<div class="paper-node paper-node-ewc"><img src="assets/ewc.png" alt="EWC 持续学习可视化实验室页面，重点展示运行视图与数学视图"></div>' +
+      '<div class="paper-node paper-node-lwf"><img src="assets/lwf.png" alt="LwF 交互式论文解释页面，重点展示 Teacher、Student 与联合损失"></div>' +
+      '<div class="paper-node paper-node-icarl"><img src="assets/icarl.png" alt="iCaRL 交互式论文解释页面，重点展示 exemplar 列表与 herding 选择"></div>' +
       '</div></div>' +
-      (camera==='overview'?'<div class="paper-process"><span>阅读</span><i>→</i><span>重构</span><i>→</i><span>交互解释</span></div>':'') +
+      (camera==='overview'?'<div class="paper-process"><span>阅读</span><i>→</i><span>理解</span><i>→</i><span>重构</span><i>→</i><span>交互解释</span><small>学习路径：LwF · EWC · iCaRL · GEM · …</small></div>':'') +
       '</section>';
   }
   function scenePath() {
@@ -259,6 +272,38 @@
   }
   function sceneAdaptation() {
     return '<section class="scene scene-adaptation"><div class="adaptation-axes"><span class="axis-y-label">DIFFERENT PEOPLE</span><span class="axis-x-label">CHANGING TASKS / DATA <b>→</b></span><span class="axis-person-label axis-person-a">USER A</span><span class="axis-person-label axis-person-b">USER B</span><span class="axis-person-label axis-person-c">USER C</span><span class="axis-stream axis-stream-a"></span><span class="axis-stream axis-stream-b"></span><div class="axis-core"><strong>ADAPTATION</strong><small>Adapt over time × Adapt across people</small></div></div><div class="adaptation-summary"><p class="scene-kicker">ONE QUESTION · TWO DIRECTIONS</p><h2>适应变化，<br>也适应不同的人。</h2><p>持续学习关注跨时间与任务的适应；个性化关注不同个体。两者共同指向智能系统如何在长期使用中持续调整。</p><div class="adaptation-equation"><strong>CONTINUAL LEARNING</strong> · Adapt over time<br><strong>PERSONALIZATION</strong> · Adapt across people</div></div></section>';
+  }
+
+  function positionPaperCamera(scene, camera) {
+    const viewport = scene.querySelector('.paper-camera');
+    const world = scene.querySelector('.paper-world');
+    const nodes = [...scene.querySelectorAll('.paper-node')];
+    if (!viewport || !world || !nodes.length || !viewport.clientWidth || !viewport.clientHeight) return;
+    let bounds;
+    if (camera === 'overview') {
+      const left = Math.min(...nodes.map((node) => node.offsetLeft));
+      const top = Math.min(...nodes.map((node) => node.offsetTop));
+      const right = Math.max(...nodes.map((node) => node.offsetLeft + node.offsetWidth));
+      const bottom = Math.max(...nodes.map((node) => node.offsetTop + node.offsetHeight));
+      bounds = {left,top,width:right-left,height:bottom-top};
+    } else {
+      const node = scene.querySelector('.paper-node-' + camera);
+      if (!node) return;
+      bounds = {left:node.offsetLeft,top:node.offsetTop,width:node.offsetWidth,height:node.offsetHeight};
+    }
+    const scale = Math.min(viewport.clientWidth*.9/bounds.width,viewport.clientHeight*.86/bounds.height);
+    const tx = (viewport.clientWidth - bounds.width*scale)/2 - bounds.left*scale;
+    const ty = (viewport.clientHeight - bounds.height*scale)/2 - bounds.top*scale;
+    world.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+    scene.dataset.camera = camera;
+  }
+
+  function initializePaperCamera(scene) {
+    const camera = scene.dataset.targetCamera || 'overview';
+    const images = [...scene.querySelectorAll('.paper-node img')];
+    Promise.all(images.map((image) => image.decode().catch(() => undefined))).then(() => {
+      if (scene.isConnected) positionPaperCamera(scene,camera);
+    });
   }
 
   const scenes = [
@@ -430,10 +475,9 @@
       markers.appendChild(feedbackLabel);
       const basePath = svg.querySelector('[data-stress-path]');
       const recoveryPath = document.createElementNS(NS,'path');
-      recoveryPath.setAttribute('class','curve-line recovery-draw');
+      recoveryPath.setAttribute('class','curve-line updated-estimate recovery-draw');
       recoveryPath.setAttribute('pathLength','1');
       recoveryPath.setAttribute('d',smoothPath(pathPoints(recoveryCurve,24)));
-      basePath.style.opacity = '.2';
       basePath.parentNode.appendChild(recoveryPath);
       recoveryPath.animate([{strokeDashoffset:1},{strokeDashoffset:0}],{duration:1250,easing:'ease-out',fill:'forwards'});
       const note = document.querySelector('.mental-caption');
@@ -466,12 +510,7 @@
     const scene = scenes[currentIndex];
     container.innerHTML = scene.render();
     const paperScene = container.querySelector('.scene-paper');
-    if (paperScene && paperScene.dataset.targetCamera !== 'overview') {
-      const targetCamera = paperScene.dataset.targetCamera;
-      requestAnimationFrame(() => {
-        if (paperScene.isConnected) paperScene.dataset.camera = targetCamera;
-      });
-    }
+    if (paperScene) requestAnimationFrame(() => initializePaperCamera(paperScene));
     indexNode.textContent = String(currentIndex+1).padStart(2,'0');
     bar.style.width = ((currentIndex+1)/scenes.length*100) + '%';
     previous.disabled = currentIndex === 0;
