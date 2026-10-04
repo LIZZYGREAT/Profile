@@ -279,6 +279,8 @@ button { color: inherit; font: inherit; }
 .paper-heading { display: flex; justify-content: space-between; align-items: center; gap: 28px; min-height: 66px; padding: 0 .7%; }
 .paper-title { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; color: #849189; }
 .paper-title-main { display: flex; align-items: baseline; gap: 14px; font: 12px var(--mono); letter-spacing: .1em; }
+.paper-title-main, .paper-caption { transition: opacity .22s ease, transform .22s ease; }
+.paper-heading.is-copy-transitioning .paper-title-main, .paper-heading.is-copy-transitioning .paper-caption { opacity: 0; transform: translateY(3px); }
 .paper-title-main strong { color: var(--teal); font-size: 15px; font-weight: 500; }
 .paper-study-path { display: flex; align-items: center; gap: 8px; color: #9aa59d; font: 10px var(--mono); letter-spacing: .06em; opacity: .78; }
 .paper-study-step { display: inline-flex; align-items: center; gap: 5px; transition: color .3s,opacity .3s; }
@@ -664,11 +666,6 @@ body.recording-mode .paper-node.is-selected { outline: none; }
 .performance-row { display: grid; grid-template-columns: 100px 1fr; align-items: center; gap: 12px; color: #647770; font-size: 14px; }
 .performance-track { height: 18px; overflow: hidden; border: 1px solid #d2dbd2; background: #f8f8f3; }
 .performance-track i { display: block; width: 0; height: 100%; background: #7da693; }
-.old-task .performance-track i { animation: old-task-trajectory 5s .15s ease-in-out both; }
-.new-task .performance-track i { background: #cc9678; animation: new-task-trajectory 5s .15s ease-in-out both; }
-.forgetting-reveal { display: flex; flex-direction: column; gap: 3px; margin-top: 5px; color: #a66d53; opacity: 0; animation: reveal-label .45s 4.35s forwards; }
-.forgetting-reveal strong { font-size: 18px; font-weight: 500; }
-.forgetting-reveal span { color: #78857e; font-size: 13px; }
 .cl-footline { margin-top: 0; }
 
 
@@ -743,8 +740,8 @@ body.recording-mode .paper-node.is-selected { outline: none; }
 .cl-dynamics-stage.is-task-b .parameter-field-current .b-update-cell.field-wave-5 { --cell-state: #b78265; animation-delay: 1.5s; }
 .cl-dynamics-stage.is-task-b .parameter-field-current .b-update-cell.field-wave-6 { --cell-state: #c59679; animation-delay: 1.6s; }
 .parameter-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 19px; color: #829088; font-size: 11px; }
-.same-model-tag { color: #a36f52; font: 10px var(--mono); letter-spacing: .1em; opacity: 0; transition: opacity .35s; }
-.cl-dynamics-stage.is-same-model .same-model-tag { opacity: 1; }
+.same-model-tag { color: #a36f52; font: 9px var(--mono); opacity: 0; transition: opacity .35s; }
+.cl-dynamics-stage.is-same-model .same-model-tag { opacity: .52; }
 .cl-performance { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 18px; min-width: 0; padding-left: 8px; }
 .cl-performance > .board-label { margin-bottom: 3px; }
 .performance-row { grid-template-columns: 82px minmax(0,1fr); gap: 9px; font-size: 13px; }
@@ -852,11 +849,10 @@ body.recording-mode .paper-node.is-selected { outline: none; }
 .branch-lane > header strong { color: #506d61; font-size: 17px; font-weight: 500; }
 .branch-lane-naive > header strong { color: #886a59; }
 .branch-lane > header small { color: #87948d; font: 10px var(--mono); }
-.branch-model-tag { color: #9aa49d; font: 9px var(--mono); letter-spacing: .1em; }
 .branch-lane-content { min-height: 0; display: grid; grid-template-columns: minmax(0,.6fr) minmax(250px,1.4fr); gap: 16px; align-items: center; }
 .branch-model-visual { min-width: 0; }
 .branch-parameter-mini { width: 100%; grid-template-columns: repeat(8,minmax(0,1fr)); aspect-ratio: 3.8; gap: 3px; margin: 0 0 5px; padding: 4px; opacity: .68; }
-.branch-model-visual > span { color: #89958e; font-size: 10px; }
+.branch-model-visual > span { color: #89958e; font-size: 9px; }
 .branch-metrics { display: grid; gap: 17px; }
 .branch-performance-row { display: grid; grid-template-columns: 76px minmax(0,1fr); gap: 8px; align-items: center; color: #6b7c73; font-size: 12px; }
 .branch-performance-row .performance-track { height: 18px; }
@@ -898,7 +894,6 @@ body.recording-mode .paper-node.is-selected { outline: none; }
   .branch-lanes .branch-lane { gap: 5px; padding: 7px; }
   .branch-lane > header strong { font-size: 11px; }
   .branch-lane > header small { font-size: 7px; }
-  .branch-model-tag { font-size: 7px; }
   .branch-lane-content { grid-template-columns: minmax(0,.75fr) minmax(0,1.25fr); gap: 6px; }
   .branch-parameter-mini { gap: 2px; padding: 3px; }
   .branch-model-visual > span { font-size: 7px; }
@@ -919,7 +914,6 @@ body.recording-mode .paper-node.is-selected { outline: none; }
 .strategy-bridge-context > div { display: flex; align-items: center; gap: 11px; font-size: 16px; }
 .strategy-bridge-context > div strong { color: #527364; font-weight: 500; }
 .strategy-bridge-context > div i { color: var(--orange); font-style: normal; }
-.strategy-bridge-context > small { color: #9aa49d; font: 10px var(--mono); letter-spacing: .08em; }
 .strategy-methods { min-height: 0; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 13px; }
 .method-bridge { min-width: 0; display: flex; flex-direction: column; justify-content: center; align-items: stretch; padding: 18px 21px; border: 1px solid #d1d9d1; background: rgba(255,255,252,.9); opacity: .14; transform: translateY(7px); transition: opacity .45s,transform .45s,box-shadow .45s,border-color .45s; }
 .method-bridge.is-current { opacity: 1; transform: translateY(0); box-shadow: 0 8px 22px rgba(63,91,74,.08); }
@@ -953,7 +947,7 @@ body.recording-mode .paper-node.is-selected { outline: none; }
   .strategy-bridge-scene .cl-scene-head p { font-size: 12px; }
   .strategy-bridge { display: flex; flex-direction: column; gap: 7px; padding: 8px; }
   .strategy-bridge-context { flex-wrap: wrap; gap: 5px 10px; padding: 5px; }
-  .strategy-context-label, .strategy-bridge-context > small { font-size: 8px; }
+  .strategy-context-label { font-size: 8px; }
   .strategy-bridge-context > div { gap: 5px; font-size: 10px; }
   .strategy-methods { display: flex; flex-direction: column; gap: 6px; }
   .method-bridge { display: grid; grid-template-columns: 1fr 20px 1fr; gap: 4px; padding: 6px; }

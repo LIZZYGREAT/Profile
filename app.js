@@ -221,11 +221,15 @@
   }
   function parameterCells(state, limit) {
     const updatesOnTaskB = new Set([0,3,4,6,9,11,13,16,18,19,22,24,27,29,31,32,35,37,40,42,44,47]);
-    const tones = {
+    const stateTones = {
       initial:[1,2,1,3,2,1,2,1,3,1,2,2,1,3,1,2,2,1,2,3,1,2,1,3,2,1,3,2,1,2,2,3,1,2,3,1,2,1,2,3,1,3,2,1,3,2,1,2],
       taskA:[2,3,2,3,2,2,3,1,3,2,2,3,2,3,2,2,3,2,2,3,1,2,2,3,3,2,3,2,2,3,2,3,2,3,3,2,2,2,3,3,2,3,2,2,3,3,2,3],
       taskB:[3,2,3,1,3,2,3,2,2,3,2,3,3,1,3,2,3,2,3,2,3,1,2,3,2,3,2,3,1,3,3,2,3,2,1,3,3,2,3,1,2,3,3,2,1,3,2,3],
-    }[state];
+    };
+    const continualUpdates = new Set([12,13,14,18,19,20,21,26,28,30,33,34,36,39,41,43,46]);
+    const tones = state === 'continualB'
+      ? stateTones.taskA.map((tone,index) => continualUpdates.has(index) ? stateTones.taskB[index] : tone)
+      : stateTones[state];
     return tones.slice(0,limit || tones.length).map((tone,index) => '<i class="field-cell field-wave-' + (1+(index%6)) + ' tone-' + tone + (state === 'initial' && updatesOnTaskB.has(index) ? ' b-update-cell' : '') + '" aria-hidden="true"></i>').join('');
   }
   function taskSamples(kind) {
@@ -238,28 +242,28 @@
       '<article class="task-tray task-a-tray"><header><strong>TASK A DATA</strong><small>先学习</small></header><div class="sample-tray task-a-samples" aria-label="Task A 概念示意样本">' + taskSamples('task-a') + '</div><span class="sample-caption">示意数据 · conceptual samples</span></article>' +
       '<article class="task-tray task-b-tray"><header><strong>TASK B DATA</strong><small>随后到来</small></header><div class="sample-tray task-b-samples" aria-label="Task B 概念示意样本">' + taskSamples('task-b') + '</div><span class="sample-caption">示意数据 · conceptual samples</span></article></div>' +
       '<div class="cl-learning-path" aria-hidden="true"><span class="sample-batch batch-a batch-a-one">○ △ ○ △</span><span class="sample-batch batch-a batch-a-two">△ ○ △ ○</span><span class="sample-batch batch-b batch-b-one">□ ◇ □ ◇</span><span class="sample-batch batch-b batch-b-two">◇ □ ◇ □</span><i>→</i></div>' +
-      '<section class="cl-model-workspace"><header class="cl-model-heading"><div><span>MODEL</span><strong>θ</strong></div><small>同一个模型，持续更新参数</small></header><div class="parameter-states"><div class="parameter-stack"><div class="parameter-field parameter-field-current" aria-label="模型参数状态示意">' + parameterCells('initial') + '</div></div><aside class="theta-a-snapshot" aria-label="Task A 学完后的模型参数快照"><strong>Task A 后</strong><span>θ_A 快照</span><div class="parameter-field snapshot-field" aria-hidden="true">' + parameterCells('taskA',24) + '</div></aside></div><div class="parameter-meta"><span class="model-state-caption">参数状态 · 概念示意</span><span class="same-model-tag">SAME MODEL</span></div></section>' +
-      '<aside class="cl-performance"><span class="board-label">同一个模型在两个任务上的表现</span><small class="performance-qualifier">qualitative performance</small><div class="performance-row old-task"><b>Task A</b><div class="performance-track"><i></i></div></div><div class="performance-row new-task"><b>Task B</b><div class="performance-track"><i></i></div></div><div class="performance-key"><span>较低</span><span>较高</span></div><div class="performance-delta" aria-hidden="true"><strong>A ↓</strong><strong>B ↑</strong></div><div class="forgetting-reveal"><strong>学会新的，旧任务表现却下降了。</strong><div class="forgetting-name"><span>灾难性遗忘</span><small>Catastrophic Forgetting</small></div></div></aside></div>' +
-      '<div class="cl-footline"><span>Conceptual visualization</span><span>A → same model θ → B</span></div></section>';
+      '<section class="cl-model-workspace"><header class="cl-model-heading"><div><span>MODEL</span><strong>θ</strong></div><small>同一个模型，持续更新参数</small></header><div class="parameter-states"><div class="parameter-stack"><div class="parameter-field parameter-field-current" aria-label="模型参数状态示意">' + parameterCells('initial') + '</div></div><aside class="theta-a-snapshot" aria-label="Task A 学完后的模型参数快照"><strong>Task A 后</strong><span>θ_A 快照</span><div class="parameter-field snapshot-field" aria-hidden="true">' + parameterCells('taskA',24) + '</div></aside></div><div class="parameter-meta"><span class="model-state-caption">参数状态 · 概念示意</span><span class="same-model-tag">同一模型</span></div></section>' +
+      '<aside class="cl-performance"><span class="board-label">同一个模型在两个任务上的表现</span><small class="performance-qualifier">定性示意</small><div class="performance-row old-task"><b>Task A</b><div class="performance-track"><i></i></div></div><div class="performance-row new-task"><b>Task B</b><div class="performance-track"><i></i></div></div><div class="performance-key"><span>较低</span><span>较高</span></div><div class="performance-delta" aria-hidden="true"><strong>A ↓</strong><strong>B ↑</strong></div><div class="forgetting-reveal"><strong>学会新的，旧任务表现却下降了。</strong><div class="forgetting-name"><span>灾难性遗忘</span><small>Catastrophic Forgetting</small></div></div></aside></div>' +
+      '<div class="cl-footline"><span>概念示意</span><span>A → 同一模型 θ → B</span></div></section>';
   }
   function sceneCLObjective() {
-    const lane = (kind,title,english,oldWidth,newWidth) => '<article class="branch-lane branch-lane-' + kind + '"><header><div><strong>' + title + '</strong><small>' + english + '</small></div><span class="branch-model-tag">MODEL STATE</span></header><div class="branch-lane-content"><div class="branch-model-visual"><div class="parameter-field branch-parameter-mini" aria-hidden="true">' + parameterCells(kind === 'naive' ? 'taskB' : 'taskA',24) + '</div><span>更新后的参数状态 · 示意</span></div><div class="branch-metrics"><div class="branch-performance-row"><b>旧任务 A</b><div class="performance-track"><i style="--bar-width:' + oldWidth + '%"></i></div></div><div class="branch-performance-row"><b>新任务 B</b><div class="performance-track"><i style="--bar-width:' + newWidth + '%"></i></div></div></div></div></article>';
+    const lane = (kind,title,english,oldWidth,newWidth) => '<article class="branch-lane branch-lane-' + kind + '"><header><div><strong>' + title + '</strong><small>' + english + '</small></div></header><div class="branch-lane-content"><div class="branch-model-visual"><div class="parameter-field branch-parameter-mini" aria-hidden="true">' + parameterCells(kind === 'naive' ? 'taskB' : 'continualB',24) + '</div><span>参数状态 · 示意</span></div><div class="branch-metrics"><div class="branch-performance-row"><b>旧任务 A</b><div class="performance-track"><i style="--bar-width:' + oldWidth + '%"></i></div></div><div class="branch-performance-row"><b>新任务 B</b><div class="performance-track"><i style="--bar-width:' + newWidth + '%"></i></div></div></div></div></article>';
     return '<section class="scene cl-scene cl-objective"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / FREEZE &amp; BRANCH</p><h2>从同一个起点出发，<em>学习新知识，也尽量保留旧能力。</em></h2><p>为了比较两种训练方式，这里回到 Task A 学完后的同一起点；对比的是继续学习 Task B 时，旧任务和新任务表现如何变化。</p></div></header>' +
       '<div class="branch-flow" data-branch-flow><svg class="branch-links" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true"><path d="M 205 250 C 300 250 292 140 380 140 L 450 140"></path><path d="M 205 250 C 300 250 292 365 380 365 L 450 365"></path></svg>' +
-      '<section class="branch-model-source"><span class="branch-source-kicker">COMPARISON RESET · 对比起点</span><div class="parameter-field branch-origin-field" aria-hidden="true">' + parameterCells('taskA') + '</div><strong class="branch-origin-state">θ_A</strong><span class="branch-source-caption">Task A 学完后的模型状态</span></section>' +
+      '<section class="branch-model-source"><span class="branch-source-kicker">对比起点</span><div class="parameter-field branch-origin-field" aria-hidden="true">' + parameterCells('taskA') + '</div><strong class="branch-origin-state">θ_A</strong><span class="branch-source-caption">Task A 学完后的模型状态</span></section>' +
       '<div class="branch-lanes">' + lane('naive','普通继续训练','Naive fine-tuning',29,90) + lane('continual','持续学习','Continual learning',62,76) + '</div></div>' +
       '<div class="branch-task-stream"><span>A</span><i>→</i><span>B</span><i>→</i><strong class="task-c-arrives">C</strong><i class="task-tail-arrives">→</i><span class="task-tail-arrives">D　E　…</span><small class="task-tail-arrives">TIME ─────────────────────→</small></div>' +
-      '<div class="cl-footline"><span>Conceptual visualization</span><span>A → same model θ → B</span></div></section>';
+      '<div class="cl-footline"><span>概念示意</span><span>A → 同一模型 θ → B</span></div></section>';
   }
   function sceneStrategyBridge() {
     const method = (id,principle,english,name,summary) => '<article class="method-bridge method-bridge-' + id + '" data-bridge-method="' + id + '"><div class="bridge-principle"><strong>' + principle + '</strong><small>' + english + '</small></div><span class="bridge-connector" aria-hidden="true">↓</span><div class="bridge-method"><strong>' + name + '</strong><span>' + summary + '</span></div></article>';
     return '<section class="scene cl-scene strategy-bridge-scene"><header class="cl-scene-head"><div><p class="scene-kicker">03 — RESEARCHING / STRATEGY → PAPERS</p><h2>解决同一个问题，<em>可以从不同地方入手。</em></h2><p>学习新任务时，怎样尽量保留已经学到的内容？经典方法给出了几种不同思路。</p></div></header>' +
-      '<div class="strategy-bridge"><div class="strategy-bridge-context"><span class="strategy-context-label">持续学习的共同目标</span><div><strong>学新的</strong><i>＋</i><strong>尽量保留旧能力</strong></div><small>CONCEPTUAL STRATEGY MAP</small></div><div class="strategy-methods">' +
+      '<div class="strategy-bridge"><div class="strategy-bridge-context"><span class="strategy-context-label">持续学习的共同目标</span><div><strong>学新的</strong><i>＋</i><strong>尽量保留旧能力</strong></div></div><div class="strategy-methods">' +
       method('ewc','限制关键参数变化','REGULARIZATION','EWC','保护对旧任务重要的参数') +
       method('lwf','保留旧模型的响应','DISTILLATION','LwF','继续参考旧模型给出的目标') +
       method('icarl','保留少量代表样本','EXEMPLARS / REPLAY','iCaRL','用代表样本帮助保留旧类别') +
-      '</div><div class="strategy-bridge-caption"><span>这里只抽取每篇工作的一个代表性机制。</span><strong>Representative intuition · 非完整方法定义</strong></div></div>' +
-      '<div class="cl-footline"><span>Conceptual visualization</span><span>A → same model θ → B</span></div></section>';
+      '</div><div class="strategy-bridge-caption"><span>这里只抽取每篇工作的一个代表性机制。</span><strong>代表性机制 · 非完整方法定义</strong></div></div>' +
+      '<div class="cl-footline"><span>概念示意</span><span>A → 同一模型 θ → B</span></div></section>';
   }
   const paperAssets = {
     ewc:{src:'assets/ewc.png',width:1896,height:1078,alt:'EWC 持续学习可视化实验室页面，展示运行视图与数学视图'},
@@ -270,25 +274,25 @@
     ewc:{name:'EWC',headline:'代表机制：保护重要参数',detail:'对旧任务更重要的参数，新任务训练时少改一点。'},
     lwf:{name:'LwF',headline:'代表机制：保留旧模型的响应',detail:'没有旧数据时，继续参考旧模型的输出。'},
     icarl:{name:'iCaRL',headline:'代表机制：保留少量代表样本',detail:'从旧类别中保留少量有代表性的 exemplar。'},
-    overview:{name:'持续学习 · 论文理解与交互重构',headline:'为了检查自己是不是真的理解，我把论文里的训练流程、公式和关键机制重新做成交互式网页。',detail:'从 EWC、LwF、iCaRL 逐步形成理解。'},
+    overview:{name:'持续学习 · 论文理解与交互重构',headline:'为了检查自己是不是真的理解，我把论文里的训练流程、公式和关键机制重新做成交互式网页。',detail:'围绕 LwF、EWC、iCaRL 等经典工作逐步建立持续学习方向的理解。'},
   };
   const paperShots = {
     ewc:{
       overview:{x:0,y:0,width:1,height:1},
       shots:[
-        {key:'model',label:'SHARED MODEL',region:{x:.12,y:.13,width:.80,height:.74}},
-        {key:'constraint',label:'FISHER / EWC LOSS',region:{x:.20,y:.13,width:.80,height:.74}},
+        {key:'model',label:'SHARED MODEL',region:{x:.04,y:.12,width:.62,height:.56}},
+        {key:'constraint',label:'FISHER / EWC LOSS',region:{x:.45,y:.12,width:.50,height:.62}},
       ],
     },
     lwf:{
       overview:{x:0,y:0,width:1,height:1},
-      shots:[{key:'mechanism',label:'TEACHER · STUDENT · JOINT LOSS',region:{x:.04,y:0,width:.92,height:1}}],
+      shots:[{key:'mechanism',label:'TEACHER · STUDENT · JOINT LOSS',region:{x:.20,y:.10,width:.45,height:.80}}],
     },
     icarl:{
       overview:{x:0,y:0,width:1,height:1},
       shots:[
-        {key:'exemplar',label:'EXEMPLAR LIST',region:{x:.05,y:.08,width:.90,height:.76}},
-        {key:'herding',label:'HERDING SELECTION',region:{x:.05,y:.16,width:.90,height:.76}},
+        {key:'exemplar',label:'EXEMPLAR LIST',region:{x:.60,y:.11,width:.39,height:.38}},
+        {key:'herding',label:'HERDING SELECTION',region:{x:.57,y:.48,width:.43,height:.38}},
       ],
     },
   };
@@ -297,10 +301,10 @@
       const asset = paperAssets[id];
       return '<figure class="paper-node paper-node-' + id + '" data-paper-node="' + id + '"><img src="' + asset.src + '" width="' + asset.width + '" height="' + asset.height + '" alt="' + asset.alt + '" loading="eager" decoding="async"></figure>';
     }).join('');
-    return '<section class="scene scene-paper" data-camera="ewc"><header class="paper-heading"><div class="paper-title"><div class="paper-title-main"><span>CONTINUAL LEARNING · STUDY WORK</span><strong data-paper-method></strong></div><div class="paper-study-path" aria-label="论文学习路径"><span class="paper-study-step" data-paper-step="ewc">EWC</span><i></i><span class="paper-study-step" data-paper-step="lwf">LwF</span><i></i><span class="paper-study-step" data-paper-step="icarl">iCaRL</span></div></div>' +
+    return '<section class="scene scene-paper" data-camera="ewc"><header class="paper-heading"><div class="paper-title"><div class="paper-title-main"><span>CONTINUAL LEARNING · STUDY WORK</span><strong data-paper-method></strong></div><div class="paper-study-path" aria-label="当前展示进度"><span class="paper-study-step" data-paper-step="ewc">EWC</span><i></i><span class="paper-study-step" data-paper-step="lwf">LwF</span><i></i><span class="paper-study-step" data-paper-step="icarl">iCaRL</span></div></div>' +
       '<div class="paper-caption"><strong data-paper-caption></strong><span data-paper-subcaption></span></div></header>' +
       '<div class="paper-camera" data-paper-camera data-phase="overview"><div class="paper-world" data-paper-world>' + images + '</div><span class="paper-camera-label" data-paper-phase-label>整张页面</span></div>' +
-      '<footer class="paper-process" data-paper-process hidden><div><span>阅读</span><i>→</i><span>理解</span><i>→</i><span>重构</span><i>→</i><span>交互解释</span></div><small>学习路径：EWC · LwF · iCaRL · GEM · …</small></footer></section>';
+      '<footer class="paper-process" data-paper-process hidden><div><span>阅读</span><i>→</i><span>理解</span><i>→</i><span>重构</span><i>→</i><span>交互解释</span></div><small>Learning Path: LwF → EWC → iCaRL → GEM → …</small></footer></section>';
   }
   function miniTrajectory(className, anchors) {
     return '<svg class="axis-trajectory ' + className + '" viewBox="64 62 816 242" preserveAspectRatio="none" aria-hidden="true"><path d="' + smoothPath(pathPoints(anchors,24)) + '"></path></svg>';
@@ -471,6 +475,9 @@
     }
     const world = workspace.querySelector('[data-paper-world]');
     const frame = workspace.querySelector('[data-paper-camera]');
+    const heading = workspace.querySelector('.paper-heading');
+    const previousCamera = workspace.dataset.camera;
+    const copyNeedsSync = !isNewWorkspace && previousCamera !== camera;
     const copy = paperCopy[camera];
     workspace.dataset.camera = camera;
     const completedPaperIndex = ['ewc','lwf','icarl'].indexOf(camera);
@@ -478,30 +485,44 @@
       step.classList.toggle('is-complete',camera === 'overview' || (completedPaperIndex >= 0 && index <= completedPaperIndex));
       step.classList.toggle('is-current',step.dataset.paperStep === camera);
     });
-    workspace.querySelector('[data-paper-method]').textContent = copy.name;
-    workspace.querySelector('[data-paper-caption]').textContent = copy.headline;
-    workspace.querySelector('[data-paper-subcaption]').textContent = copy.detail;
+    const updateCopy = () => {
+      workspace.querySelector('[data-paper-method]').textContent = copy.name;
+      workspace.querySelector('[data-paper-caption]').textContent = copy.headline;
+      workspace.querySelector('[data-paper-subcaption]').textContent = copy.detail;
+    };
+    if (copyNeedsSync) heading.classList.add('is-copy-transitioning');
+    else updateCopy();
     workspace.querySelector('[data-paper-process]').hidden = camera !== 'overview';
     world.classList.toggle('is-initial',isNewWorkspace);
     world.querySelectorAll('[data-paper-node]').forEach((node) => node.classList.remove('is-selected'));
-    if (camera === 'overview') {
-      frame.dataset.phase = 'global';
-      workspace.querySelector('[data-paper-phase-label]').textContent = '三张页面 · 全局概览';
-      frame.dataset.shot = 'global';
-      setPaperTransform(frame,world,'','global');
-      return;
-    }
-    frame.dataset.phase = 'overview';
-    frame.dataset.shot = 'overview';
-    workspace.querySelector('[data-paper-phase-label]').textContent = '整张页面 · OVERVIEW';
-    setPaperTransform(frame,world,camera,'overview');
-    if (isNewWorkspace) requestAnimationFrame(() => world.classList.remove('is-initial'));
     const targetScene = 'paper-' + camera;
     const isCurrent = () => paperCameraRun === run && scenes[currentIndex]?.id === targetScene && workspace.isConnected;
     const showShots = async () => {
+      if (copyNeedsSync) {
+        await wait(220);
+        if (!isCurrent()) return;
+        setPaperTransform(frame,world,camera,camera === 'overview' ? 'global' : 'overview');
+        await wait(300);
+        if (!isCurrent()) return;
+        updateCopy();
+        heading.classList.remove('is-copy-transitioning');
+      } else {
+        setPaperTransform(frame,world,camera,camera === 'overview' ? 'global' : 'overview');
+      }
+      if (camera === 'overview') {
+        frame.dataset.phase = 'global';
+        workspace.querySelector('[data-paper-phase-label]').textContent = '三张页面 · 全局概览';
+        frame.dataset.shot = 'global';
+      } else {
+        frame.dataset.phase = 'overview';
+        frame.dataset.shot = 'overview';
+        workspace.querySelector('[data-paper-phase-label]').textContent = '整张页面 · OVERVIEW';
+      }
+      if (isNewWorkspace) requestAnimationFrame(() => world.classList.remove('is-initial'));
       if (!isNewWorkspace) await waitForPaperMotion(world);
       if (!isCurrent()) return;
-      await wait(500);
+      if (camera === 'overview') return;
+      await wait(isNewWorkspace ? 800 : 500);
       if (!isCurrent()) return;
       for (let index=0;index<paperShots[camera].shots.length;index+=1) {
         const shot = paperShots[camera].shots[index];
