@@ -186,7 +186,7 @@
     return `<section class="scene scene-learning-system is-notes">
       <header class="ls-head">
         <div>
-          <p class="scene-kicker">03 — LEARNING / LEARNING SYSTEM</p>
+          <p class="scene-kicker">01 — LEARNING / LEARNING SYSTEM</p>
           <h1 class="ls-title">学到的内容，要能够留下来，<em>也能够重新连起来。</em></h1>
           <p class="ls-lead">课程、技术、论文和专业概念，我都会持续整理成自己的笔记。</p>
         </div>
@@ -195,7 +195,7 @@
         <div class="ls-source-groups" aria-label="学习材料">
           <div class="ls-source-group"><span>COURSE</span><small>操作系统</small><small>编译原理</small></div>
           <div class="ls-source-group"><span>TECH</span><small>PyTorch</small><small>Docker</small></div>
-          <div class="ls-source-group"><span>PAPERS</span><small>EWC</small><small>LwF · iCaRL</small></div>
+          <div class="ls-source-group"><span>PAPERS</span><small>LwF</small><small>EWC · iCaRL</small></div>
           <div class="ls-source-group"><span>TERMS</span><small>Fisher</small><small>Herding</small></div>
         </div>
         <article class="ls-obsidian" aria-label="Obsidian Markdown 笔记">
@@ -242,7 +242,7 @@
         </article>
       </div>
       <footer class="ls-closure"><div class="ls-close-flow"><span>NOTE</span><i>→</i><span>ORGANIZE</span><i>→</i><span>CONNECT</span><i>→</i><span>DISCOVER</span></div><strong class="ls-system-label">LEARNING SYSTEM</strong><p class="ls-last-line">我希望知识不是看过就结束，而是能够被整理、重新找到，也能继续长出来。</p></footer>
-      <div class="ls-next-cue">然后，把这些知识真正用起来。<span>KNOWLEDGE → PRACTICE</span></div>
+      <div class="ls-next-cue"><p class="ls-next-context">我希望知识不是看过就结束，而是能够被整理、重新找到，也能继续长出来。</p><strong>然后，把这些知识真正用起来。</strong><span>KNOWLEDGE → PRACTICE</span></div>
     </section>`;
   }
   function sceneAwards() {
@@ -409,7 +409,6 @@
   let lastWheel = 0;
   let paperCameraRun = 0;
   let learningSystemTimers = [];
-  let handoffAnimationTimer = 0;
   if (new URLSearchParams(window.location.search).get('record') === '1') document.body.classList.add('recording-mode');
   totalNode.textContent = String(scenes.length).padStart(2,'0');
 
@@ -608,7 +607,6 @@
     const previousSceneId = scenes[currentIndex]?.id;
     learningSystemTimers.forEach((timer) => window.clearTimeout(timer));
     learningSystemTimers = [];
-    window.clearTimeout(handoffAnimationTimer);
     container.classList.remove('is-learning-handoff');
     const run = ++paperCameraRun;
     currentIndex = Math.max(0,Math.min(scenes.length-1,index));
@@ -617,7 +615,6 @@
     else container.innerHTML = scene.render();
     if (previousSceneId === 'learning-system' && scene.id === 'competitions') {
       container.classList.add('is-learning-handoff');
-      handoffAnimationTimer = window.setTimeout(() => container.classList.remove('is-learning-handoff'),760);
     }
     indexNode.textContent = String(currentIndex+1).padStart(2,'0');
     bar.style.width = ((currentIndex+1)/scenes.length*100) + '%';
@@ -642,7 +639,6 @@
       scheduleLearningBeat(12400,(node) => node.classList.add('is-returned'));
       scheduleLearningBeat(13400,(node) => node.classList.add('is-learning-system-close'));
       scheduleLearningBeat(14100,(node) => node.classList.add('is-handoff'));
-      scheduleLearningBeat(15000,() => render(currentIndex+1));
     }
     if (scene.id === 'mental-feedback') requestAnimationFrame(flyEvidence);
     if (scene.id === 'cl-forgetting') {

@@ -1079,6 +1079,7 @@ body.recording-mode .stage-controls { display: none; }
 .ls-kb-overview { height: calc(100% - 58px); display: grid; grid-template-columns: .98fr 1.06fr .91fr; gap: 10px; padding: 12px; transition: opacity .4s; }
 .ls-kb-documents, .ls-kb-terms, .ls-kb-collections, .ls-agent-card { min-width: 0; border: 1px solid #dce2da; background: rgba(250,250,245,.82); }
 .ls-kb-documents, .ls-kb-terms { padding: 12px 10px; }
+.ls-kb-terms { position: relative; }
 .ls-section-label { display: flex; align-items: baseline; flex-wrap: wrap; gap: 5px 8px; font-size: 9px; }
 .ls-section-label i { color: #9aa59e; font: 10px var(--sans); letter-spacing: 0; font-style: normal; }
 .ls-doc-row { display: flex; flex-direction: column; gap: 3px; margin-top: 14px; padding: 9px 7px; border-bottom: 1px solid #e6e9e3; }
@@ -1098,10 +1099,10 @@ body.recording-mode .stage-controls { display: none; }
 .ls-agent-card > small { margin-top: 5px; color: #929e96; font-size: 9px; line-height: 1.45; }
 .ls-agent-status { display: flex; align-items: center; gap: 5px; margin-top: auto; color: #798e82; font: 8px var(--mono); }
 .ls-agent-status i, .ls-discovery-state i { width: 6px; height: 6px; border-radius: 50%; background: #7ca18c; }
-.ls-term-detail { position: absolute; z-index: 2; top: 62px; bottom: 12px; left: 39%; width: 36%; display: flex; flex-direction: column; justify-content: center; gap: 6px; padding: 18px; border: 1px solid #a8c4b4; background: #f8faf4; box-shadow: 0 10px 24px rgba(31,64,53,.1); opacity: 0; transform: translateY(9px); transition: opacity .38s, transform .38s; pointer-events: none; }
-.ls-term-detail > strong { margin-bottom: 8px; color: #356f63; font-size: 16px; font-weight: 500; }
-.ls-term-detail > span { margin-top: 5px; color: #89988e; font: 8px var(--mono); letter-spacing: .09em; }
-.ls-term-detail > small { color: #5d7168; font-size: 10px; line-height: 1.45; }
+.ls-term-detail { position: absolute; z-index: 2; top: 180px; right: 5px; left: 5px; display: flex; flex-direction: column; justify-content: flex-start; gap: 3px; padding: 10px 12px; border: 1px solid #a8c4b4; background: #f8faf4; box-shadow: 0 5px 14px rgba(31,64,53,.08); opacity: 0; transform: translateY(6px); transition: opacity .38s, transform .38s; pointer-events: none; }
+.ls-term-detail > strong { margin-bottom: 2px; color: #356f63; font-size: 14px; font-weight: 500; }
+.ls-term-detail > span { margin-top: 2px; color: #89988e; font: 8px var(--mono); letter-spacing: .09em; }
+.ls-term-detail > small { color: #5d7168; font-size: 9px; line-height: 1.35; }
 .ls-research-board { position: absolute; z-index: 5; inset: 69px 10px 10px; padding: 14px 15px; border: 1px solid #cbd5ca; background: #f7f7f1; opacity: 0; transform: translateY(10px); transition: opacity .35s, transform .35s; pointer-events: none; }
 .ls-research-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid #dce2da; }
 .ls-research-head > div { display: grid; gap: 3px; }
@@ -1136,9 +1137,11 @@ body.recording-mode .stage-controls { display: none; }
 .ls-close-flow { display: flex; align-items: center; justify-content: center; gap: clamp(9px,1.6vw,25px); color: #70877c; font: clamp(9px,.76vw,12px) var(--mono); letter-spacing: .08em; }
 .ls-close-flow i { color: var(--orange); font-style: normal; }
 .ls-system-label { margin-top: 2px; color: var(--teal); font: 11px var(--mono); letter-spacing: .16em; transition: transform .65s; }
-.ls-last-line { margin: 3px 0 0; color: #66766e; font-size: 12px; text-align: center; }
-.ls-next-cue { position: absolute; z-index: 6; right: 4%; bottom: 14%; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; max-width: 41%; padding: 14px 18px; border-left: 2px solid var(--orange); background: rgba(244,243,237,.96); color: #33494a; font-size: clamp(16px,1.6vw,23px); opacity: 0; transform: translateX(13px); transition: opacity .5s, transform .5s; pointer-events: none; }
-.ls-next-cue span { color: #91a097; font: 9px var(--mono); letter-spacing: .12em; }
+.ls-last-line { margin: 3px 0 0; color: #66766e; font-size: 12px; text-align: center; transition: opacity .35s; }
+.ls-next-cue { position: absolute; z-index: 7; top: 50%; left: 50%; display: flex; flex-direction: column; align-items: center; gap: 10px; width: min(94%,1280px); padding: clamp(20px,2.2vw,32px) clamp(20px,2.6vw,42px); border: 1px solid rgba(168,196,180,.75); border-top: 2px solid var(--orange); background: rgba(244,243,237,.98); box-shadow: 0 18px 44px rgba(31,64,53,.12); color: #33494a; font-size: clamp(38px,3.2vw,56px); font-weight: 500; line-height: 1.3; text-align: center; opacity: 0; transform: translate(-50%,calc(-50% + 14px)) scale(.98); transition: opacity .5s, transform .5s; pointer-events: none; }
+.ls-next-context { margin: 0; color: #66766e; font-size: clamp(16px,1.4vw,22px); font-weight: 400; line-height: 1.5; }
+.ls-next-cue > strong { display: block; white-space: nowrap; font: inherit; }
+.ls-next-cue span { color: #7e9087; font: 11px var(--mono); letter-spacing: .12em; }
 .scene-learning-system.is-scale-problem:not(.is-knowledgebase) .ls-source-groups { opacity: .22; transform: translateX(-8px); }
 .scene-learning-system.is-scale-problem:not(.is-knowledgebase) .ls-scale-layer { opacity: 1; }
 .scene-learning-system.is-knowledgebase .ls-source-groups { opacity: 0; transform: translateX(-12px); }
@@ -1166,7 +1169,8 @@ body.recording-mode .stage-controls { display: none; }
 .scene-learning-system.is-learning-system-close .ls-workspace { opacity: .38; transform: scale(.955) translateY(-6px); }
 .scene-learning-system.is-learning-system-close .ls-closure { opacity: 1; transform: translateY(0); }
 .scene-learning-system.is-handoff .ls-system-label { transform: translateX(-17%) scale(.78); transform-origin: left center; }
-.scene-learning-system.is-handoff .ls-next-cue { opacity: 1; transform: translateX(0); }
+.scene-learning-system.is-handoff .ls-last-line { opacity: 0; }
+.scene-learning-system.is-handoff .ls-next-cue { opacity: 1; transform: translate(-50%,-50%) scale(1); }
 .scene-container.is-learning-handoff .scene-awards { animation: competitions-enter-from-right .72s cubic-bezier(.2,.75,.25,1) both; }
 @keyframes ls-rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes ls-workspace-in { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -1192,7 +1196,7 @@ body.recording-mode .stage-controls { display: none; }
   .ls-knowledgebase { left: 61%; }
   .ls-kb-overview { grid-template-columns: .9fr 1fr .86fr; gap: 6px; padding: 8px; }
   .ls-kb-documents, .ls-kb-terms, .ls-kb-collections, .ls-agent-card { padding: 8px 7px; }
-  .ls-term-detail { left: 35%; width: 42%; padding: 11px; }
+.ls-term-detail { top: 146px; right: 4px; left: 4px; padding: 9px; }
   .ls-source-group small { font-size: 10px; }
   .ls-candidate-layout { gap: 7px; }
   .ls-candidate { padding: 5px; }
@@ -1242,9 +1246,9 @@ body.recording-mode .stage-controls { display: none; }
   .ls-agent-card > strong { margin-top: 5px; font-size: 9px; }
   .ls-agent-card > small { font-size: 7px; }
   .ls-agent-status { font-size: 7px; }
-  .ls-term-detail { top: 48px; bottom: 7px; left: 37%; width: 48%; gap: 4px; padding: 9px; }
-  .ls-term-detail > strong { font-size: 12px; }
-  .ls-term-detail > span, .ls-term-detail > small { font-size: 8px; }
+  .ls-term-detail { top: 130px; right: 4px; left: 4px; gap: 2px; padding: 8px; }
+  .ls-term-detail > strong { margin-bottom: 1px; font-size: 10px; }
+  .ls-term-detail > span, .ls-term-detail > small { font-size: 7px; }
   .ls-research-board { inset: 55px 6px 6px; padding: 8px; }
   .ls-research-head { padding-bottom: 6px; }
   .ls-research-head > div > strong { font-size: 10px; }
@@ -1279,7 +1283,10 @@ body.recording-mode .stage-controls { display: none; }
   .ls-close-flow { gap: 6px; font-size: 7px; }
   .ls-system-label { font-size: 9px; }
   .ls-last-line { max-width: 100%; font-size: 10px; line-height: 1.5; }
-  .ls-next-cue { right: 0; bottom: 90px; max-width: 92%; padding: 9px 11px; font-size: 14px; }
+  .ls-next-cue { width: calc(100% - 16px); max-width: 1280px; padding: 14px 10px; gap: 7px; font-size: clamp(16px,5.6vw,30px); }
+  .ls-next-context { font-size: clamp(14px,1.45vw,19px); }
+  .ls-next-cue > strong { font-size: clamp(16px,5.6vw,30px); }
+  .ls-next-cue span { font-size: 9px; }
   .scene-learning-system.is-learning-system-close .ls-workspace { opacity: .45; transform: none; }
   .scene-learning-system.is-handoff .ls-system-label { transform: scale(.82); }
 }
