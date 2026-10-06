@@ -1,6 +1,6 @@
 # 奖学金自我介绍录屏舞台
 
-这是一个原生 HTML / CSS / JavaScript 的单页 presentation，默认入口为 index.html，页面标题不包含姓名。
+这是一个包含 21 个 Scene 的原生 HTML / CSS / JavaScript 单页 presentation，默认入口为 index.html，页面标题不包含姓名。
 
 ## 打开与推进
 
@@ -8,8 +8,10 @@
 
 ## 叙事顺序
 
-1. LEARNING：开场、学业指标、知识结构与竞赛经历。
+1. LEARNING：开场、学业指标、知识结构、学习系统与竞赛经历。
 2. BUILDING：MentalFlow 的一天、模型、个体差异、预测、关怀和反馈。
 3. RESEARCHING：持续学习过程、论文交互式学习页面、适应性收束。
 
 MentalFlow 压力曲线与持续学习任务表现条均为概念示意，不代表测量数据、正式算法输出或论文实验结果。论文学习段直接引用 assets/ 中的 EWC、LwF、iCaRL 原图。
+
+Learning System 场景展示 Obsidian 笔记如何延伸为个人 KnowledgeBase，并呈现 Research Agent 发现论文候选、由本人审核后再纳入知识体系的过程。

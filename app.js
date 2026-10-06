@@ -182,6 +182,69 @@
       '<article class="domain"><h3>信息与智能</h3><p>INFORMATION & INTELLIGENCE</p><div class="domain-courses"><span>信息检索系统</span><span>人工智能实践课</span></div></article>' +
       '</div></div></section>';
   }
+  function sceneLearningSystem() {
+    return `<section class="scene scene-learning-system is-notes">
+      <header class="ls-head">
+        <div>
+          <p class="scene-kicker">03 — LEARNING / LEARNING SYSTEM</p>
+          <h1 class="ls-title">学到的内容，要能够留下来，<em>也能够重新连起来。</em></h1>
+          <p class="ls-lead">课程、技术、论文和专业概念，我都会持续整理成自己的笔记。</p>
+        </div>
+      </header>
+      <div class="ls-workspace">
+        <div class="ls-source-groups" aria-label="学习材料">
+          <div class="ls-source-group"><span>COURSE</span><small>操作系统</small><small>编译原理</small></div>
+          <div class="ls-source-group"><span>TECH</span><small>PyTorch</small><small>Docker</small></div>
+          <div class="ls-source-group"><span>PAPERS</span><small>EWC</small><small>LwF · iCaRL</small></div>
+          <div class="ls-source-group"><span>TERMS</span><small>Fisher</small><small>Herding</small></div>
+        </div>
+        <article class="ls-obsidian" aria-label="Obsidian Markdown 笔记">
+          <div class="ls-panel-head"><div><span class="ls-app-mark">O</span><div><b>OBSIDIAN</b><small>Markdown Notes</small></div></div><span class="ls-window-dots"><i></i><i></i><i></i></span></div>
+          <div class="ls-note-layout">
+            <aside class="ls-note-tree"><span>VAULT</span><b>⌄ Course</b><small>操作系统.md</small><b>⌄ Papers</b><small class="is-current-note">EWC.md</small><small>LwF.md</small><b>⌄ Terms</b><small>Fisher.md</small></aside>
+            <div class="ls-note-editor">
+              <div class="ls-note-path">Papers <i>/</i> EWC.md</div>
+              <h2 class="ls-note-step">Elastic Weight Consolidation</h2>
+              <p class="ls-note-step">在连续学习中，新的任务可能覆盖先前学到的参数。</p>
+              <p class="ls-note-step">EWC 用 <mark>Fisher Information</mark> 估计参数的重要性。</p>
+              <div class="ls-formula ls-note-step">F<sub>i</sub> ≈ 𝔼 [(∂ log p / ∂ θ<sub>i</sub>)²]</div>
+              <div class="ls-note-links ls-note-step"><span>[[Continual Learning]]</span><span>[[Bayesian]]</span></div>
+              <div class="ls-note-term ls-note-step"><i></i> Fisher Information <b>↗</b></div>
+            </div>
+          </div>
+        </article>
+        <aside class="ls-scale-layer" aria-label="知识规模带来的问题">
+          <div class="ls-question-list"><p>以前在哪讲过这个概念？</p><p>这些论文之间有什么关系？</p><p>最近这个方向又有哪些新工作？</p></div>
+          <div class="ls-fisher-links" aria-label="Fisher Information 在多篇笔记中重复出现并彼此关联"><span><b>Fisher Information</b><small>EWC 前置知识</small></span><span><b>Fisher Information</b><small>EWC 论文笔记</small></span><span><b>Fisher Information</b><small>Bayesian 相关笔记</small></span></div>
+          <p class="ls-turn">内容越来越多以后，<strong>只“记下来”已经不够了。</strong></p>
+        </aside>
+        <article class="ls-knowledgebase" aria-label="个人知识库">
+          <div class="ls-panel-head ls-kb-head"><div><span class="ls-kb-mark">KB</span><div><b>KNOWLEDGE BASE</b><small>Documents · Terms · Collections</small></div></div><span class="ls-private-label">SELF-HOSTED</span></div>
+          <div class="ls-kb-overview">
+            <section class="ls-kb-documents"><span class="ls-section-label">DOCUMENTS <i>课程 · 技术 · 论文笔记</i></span><div class="ls-doc-row"><b>操作系统</b><small>COURSE NOTE</small></div><div class="ls-doc-row"><b>EWC 阅读笔记</b><small>PAPER NOTE</small></div><div class="ls-doc-row"><b>PyTorch 实践</b><small>TECH NOTE</small></div></section>
+            <section class="ls-kb-terms"><span class="ls-section-label">TERMS <i>可复用的知识节点</i></span><div class="ls-term-row is-fisher"><span>Fisher Information</span><b>↗</b></div><div class="ls-term-row"><span>Herding</span><b>↗</b></div><div class="ls-term-row"><span>Likelihood</span><b>↗</b></div><div class="ls-term-detail"><strong>Fisher Information</strong><span>RELATED NOTES</span><small>EWC 前置知识 · EWC 论文阅读</small><span>RELATED TERMS</span><small>Laplace Approximation · Parameter Importance</small><span>APPEARS IN</span><small>EWC</small></div></section>
+            <div class="ls-kb-side"><section class="ls-kb-collections"><span class="ls-section-label">COLLECTIONS</span><div><b>Continual Learning</b><small>Systems · ML</small></div></section><section class="ls-agent-card"><span class="ls-section-label">RESEARCH AGENT</span><strong>发现新的论文候选</strong><small>Research Profile · Scheduled discovery</small><span class="ls-agent-status"><i></i>READY TO DISCOVER</span></section></div>
+          </div>
+          <section class="ls-research-board" aria-label="Research Agent 论文候选与人工审核">
+            <div class="ls-research-head"><div><span class="ls-section-label">RESEARCH AGENT <i>Candidate Inbox</i></span><strong>把新的工作带回已有知识</strong></div><span class="ls-review-badge">人工确认</span></div>
+            <div class="ls-candidate-layout">
+              <div class="ls-candidate-list"><span class="ls-profile-label">RESEARCH PROFILE</span><b class="ls-profile-topic">Continual Learning</b><small>Personalization</small><div class="ls-discovery-state"><i></i>Scheduled discovery</div>
+                <div class="ls-candidate"><b>PAPER CANDIDATE 01</b><span>Recent work · Continual Learning</span></div>
+                <div class="ls-candidate"><b>PAPER CANDIDATE 02</b><span>Recent work · Replay</span></div>
+                <div class="ls-candidate"><b>PAPER CANDIDATE 03</b><span>Recent work · Personalization</span></div>
+              </div>
+              <div class="ls-review-detail"><span class="ls-section-label">WHY RELEVANT</span><p>与 Continual Learning / Replay 相关</p><span class="ls-section-label">RELATED KNOWLEDGE</span><p>iCaRL · GEM · Replay</p><div class="ls-review-actions"><b>SHORTLIST</b><span>DISMISS</span></div><div class="ls-human-check"><i>✓</i><span><b>人工确认</b><small>由我决定是否进入知识体系</small></span></div>
+                <div class="ls-save-flow"><span>SHORTLIST</span><i>→</i><span>SAVE SOURCE</span><i>→</i><span>CREATE NOTE</span></div>
+                <div class="ls-returned-knowledge"><span>SOURCE<small>Candidate 01</small></span><i>+</i><span>PAPER NOTE<small>新建笔记</small></span></div>
+              </div>
+            </div>
+          </section>
+        </article>
+      </div>
+      <footer class="ls-closure"><div class="ls-close-flow"><span>NOTE</span><i>→</i><span>ORGANIZE</span><i>→</i><span>CONNECT</span><i>→</i><span>DISCOVER</span></div><strong class="ls-system-label">LEARNING SYSTEM</strong><p class="ls-last-line">我希望知识不是看过就结束，而是能够被整理、重新找到，也能继续长出来。</p></footer>
+      <div class="ls-next-cue">然后，把这些知识真正用起来。<span>KNOWLEDGE → PRACTICE</span></div>
+    </section>`;
+  }
   function sceneAwards() {
     return '<section class="scene scene-awards"><div class="awards-heading"><p class="scene-kicker">LEARNING IN PRACTICE</p><h1 class="scene-title">在问题中，<br><em>检验所学。</em></h1><p class="scene-note">通过数学学科竞赛与人工智能技术实践，拓展知识的使用场景。</p></div><div class="award-timeline">' +
       '<article class="award-item"><div><span class="award-year">2025</span><span class="award-place">天津赛区</span></div><div><div class="award-title">全国大学生数学竞赛</div><div class="award-subtitle">数学学科竞赛</div></div><div class="award-result">一等奖<small>天津赛区</small></div></article>' +
@@ -317,6 +380,7 @@
     { id:'hero', chapter:'LEARNING', render:sceneHero },
     { id:'academic', chapter:'LEARNING', render:sceneAcademic },
     { id:'knowledge', chapter:'LEARNING', render:sceneKnowledge },
+    { id:'learning-system', chapter:'LEARNING', render:sceneLearningSystem },
     { id:'competitions', chapter:'LEARNING', render:sceneAwards },
     { id:'bridge', chapter:'BUILDING', render:sceneBridge },
     { id:'mental-day', chapter:'BUILDING', render:sceneMentalDay },
@@ -344,6 +408,8 @@
   let currentIndex = 0;
   let lastWheel = 0;
   let paperCameraRun = 0;
+  let learningSystemTimers = [];
+  let handoffAnimationTimer = 0;
   if (new URLSearchParams(window.location.search).get('record') === '1') document.body.classList.add('recording-mode');
   totalNode.textContent = String(scenes.length).padStart(2,'0');
 
@@ -539,16 +605,45 @@
     showShots();
   }
   function render(index) {
+    const previousSceneId = scenes[currentIndex]?.id;
+    learningSystemTimers.forEach((timer) => window.clearTimeout(timer));
+    learningSystemTimers = [];
+    window.clearTimeout(handoffAnimationTimer);
+    container.classList.remove('is-learning-handoff');
     const run = ++paperCameraRun;
     currentIndex = Math.max(0,Math.min(scenes.length-1,index));
     const scene = scenes[currentIndex];
     if (scene.id.startsWith('paper-')) renderPaper(scene.id === 'paper-overview' ? 'overview' : scene.id.slice('paper-'.length),run);
     else container.innerHTML = scene.render();
+    if (previousSceneId === 'learning-system' && scene.id === 'competitions') {
+      container.classList.add('is-learning-handoff');
+      handoffAnimationTimer = window.setTimeout(() => container.classList.remove('is-learning-handoff'),760);
+    }
     indexNode.textContent = String(currentIndex+1).padStart(2,'0');
     bar.style.width = ((currentIndex+1)/scenes.length*100) + '%';
     previous.disabled = currentIndex === 0;
     next.disabled = currentIndex === scenes.length-1;
     setChapter(scene.chapter);
+    if (scene.id === 'learning-system') {
+      const learningScene = container.querySelector('.scene-learning-system');
+      const scheduleLearningBeat = (delay,callback) => {
+        const timer = window.setTimeout(() => {
+          if (!learningScene || !learningScene.isConnected || scenes[currentIndex]?.id !== 'learning-system') return;
+          callback(learningScene);
+        },delay);
+        learningSystemTimers.push(timer);
+      };
+      scheduleLearningBeat(3200,(node) => node.classList.add('is-scale-problem'));
+      scheduleLearningBeat(5300,(node) => node.classList.add('is-knowledgebase'));
+      scheduleLearningBeat(7000,(node) => node.classList.add('is-term-focus'));
+      scheduleLearningBeat(9300,(node) => node.classList.add('is-research-agent'));
+      scheduleLearningBeat(10300,(node) => node.classList.add('is-candidates'));
+      scheduleLearningBeat(11400,(node) => node.classList.add('is-reviewed'));
+      scheduleLearningBeat(12400,(node) => node.classList.add('is-returned'));
+      scheduleLearningBeat(13400,(node) => node.classList.add('is-learning-system-close'));
+      scheduleLearningBeat(14100,(node) => node.classList.add('is-handoff'));
+      scheduleLearningBeat(15000,() => render(currentIndex+1));
+    }
     if (scene.id === 'mental-feedback') requestAnimationFrame(flyEvidence);
     if (scene.id === 'cl-forgetting') {
       const dynamics = container.querySelector('[data-cl-dynamics]');
