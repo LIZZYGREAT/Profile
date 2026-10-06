@@ -172,14 +172,15 @@
       '<div class="metrics-row">' +
       metric('GPA','3.76<small>/ 4.00</small>','CUMULATIVE GPA',true) +
       metric('竞赛获奖','2<small>项</small>','2025 · 赛区奖项',false) +
+      '<article class="metric project-metric"><strong class="metric-value">大创 · 国创</strong><span class="metric-label">创新创业项目</span><span class="metric-caption">大学生创新创业训练计划</span></article>' +
       '</div><div class="academic-note"><span>成绩是阶段结果，背后是逐步形成的计算机知识结构。</span><strong>LEARNING → KNOWLEDGE STRUCTURE</strong></div></section>';
   }
   function sceneKnowledge() {
     return '<section class="scene scene-knowledge"><div class="knowledge-heading"><div><p class="scene-kicker">LEARNING / KNOWLEDGE STRUCTURE</p><h1 class="scene-title">知识从基础，<em>长成结构。</em></h1></div><p class="scene-note">从数学与编程基础出发，课程知识逐渐连接到算法、系统、信息与智能方向。</p></div>' +
       '<div class="knowledge-diagram"><div class="foundation-node"><small>FOUNDATION</small><strong>数学 <span>+</span> 编程</strong><small>分析问题 · 表达方法</small></div><div class="knowledge-trunk"></div><div class="cs-node"><small>COMPUTER SCIENCE</small><strong>计算机学科基础</strong></div><div class="branch-lines"><span></span><span></span><span></span></div><div class="domain-row">' +
-      '<article class="domain"><h3>算法</h3><p>ALGORITHMIC THINKING</p><div class="domain-courses"><span>算法导论</span></div></article>' +
+      '<article class="domain"><h3>算法</h3><p>ALGORITHMIC THINKING</p><div class="domain-courses"><span>算法导论</span><span>python实践课</span><span>数据结构</span></div></article>' +
       '<article class="domain"><h3>系统</h3><p>SYSTEMS & ARCHITECTURE</p><div class="domain-courses"><span>计算机系统基础</span><span>计算机组成原理</span><span>并行计算</span></div></article>' +
-      '<article class="domain"><h3>信息与智能</h3><p>INFORMATION & INTELLIGENCE</p><div class="domain-courses"><span>信息检索系统</span><span>人工智能实践课</span></div></article>' +
+      '<article class="domain"><h3>信息与智能</h3><p>INFORMATION & INTELLIGENCE</p><div class="domain-courses"><span>信息检索系统</span><span>人工智能实践课</span><span>人工智能导论</span></div></article>' +
       '</div></div></section>';
   }
   function sceneLearningSystem() {
@@ -251,6 +252,13 @@
       '<article class="award-item"><div><span class="award-year">2025</span><span class="award-place">华北赛区</span></div><div><div class="award-title">动感地带 AI+ 高校智创计划</div><div class="award-subtitle">AI 技术赛道</div></div><div class="award-result">三等奖<small>华北赛区</small></div></article>' +
       '</div></section>';
   }
+  function sceneFireEyeProject() {
+    return '<section class="scene scene-awards scene-fireeye-project"><div class="awards-heading"><p class="scene-kicker">INNOVATION PROJECT</p><h1 class="scene-title">从火情感知，<br><em>到安全逃生。</em></h1><p class="scene-note">“火眼金径”是一套基于人工智能的火灾应急系统，串联火情监测、受困报警与逃生路径规划，探索从发现风险到引导撤离的响应链路。</p></div><div class="award-timeline project-timeline">' +
+      '<article class="award-item project-step"><div><span class="award-year">01</span><span class="award-place">SENSE</span></div><div><div class="award-title">火情监测</div><div class="award-subtitle">持续识别现场火情变化，提供及时的风险信息。</div></div><div class="award-result">监测<small>发现风险</small></div></article>' +
+      '<article class="award-item project-step"><div><span class="award-year">02</span><span class="award-place">ALERT</span></div><div><div class="award-title">受困报警</div><div class="award-subtitle">识别受困状态并发出告警，为救援争取响应时间。</div></div><div class="award-result">告警<small>传递求助</small></div></article>' +
+      '<article class="award-item project-step"><div><span class="award-year">03</span><span class="award-place">ROUTE</span></div><div><div class="award-title">逃生路径规划</div><div class="award-subtitle">结合火情与空间信息，规划清晰可行的撤离方向。</div></div><div class="award-result">规划<small>引导撤离</small></div></article>' +
+      '</div></section>';
+  }
   function sceneBridge() {
     return '<section class="scene scene-transition"><p class="transition-title">LEARNING BECOMES A FOUNDATION</p><div class="transition-flow"><span>LEARNING</span><i>→</i><span>BUILDING</span></div><p class="transition-caption">从理解学科知识，到在真实问题中构建系统。</p><p class="transition-foundation">GPA · COURSES · PROBLEM SOLVING</p></section>';
   }
@@ -258,7 +266,9 @@
     return '<section class="scene scene-mental"><div class="mental-heading">' + sceneHead('02 — BUILDING / MENTALFLOW','一天的压力，<em>随时间建模。</em>','课程、任务、讨论、休息都落在同一条时间线上。曲线是概念示意，不是单个事件的压力打分。') + '</div><div class="mental-workspace"><div class="mental-chart-panel"><div class="chart-header"><strong>Stress × Time</strong><span class="chart-qualifier">ONE CONTINUOUS DAY</span></div>' + graphMarkup({mode:'day'}) + '<div class="chart-legend"><span><i class="legend-swatch"></i>压力状态 S(t)</span><span><i class="legend-swatch context"></i>日程上下文</span></div><div class="mental-caption">Conceptual visualization · 非实测轨迹</div></div><aside class="mental-aside"><span class="aside-index">F1 / DAY CONTEXT</span><h3>真实的一天，<br>不止日历上的事件。</h3><p>从早课到项目会议，日程为理解提供上下文。尚未被记录的生活细节，需要新的证据才能进入模型。</p><div class="aside-rule"></div><p class="aside-foot">初始日程不包含羽毛球。</p></aside></div></section>';
   }
   function sceneModel() {
-    return '<section class="scene scene-mental scene-model"><div class="mental-heading">' + sceneHead('02 — BUILDING / MODEL LENS','日程不会<em>直接变成压力。</em>','系统先理解发生了什么、这件事对这个人意味着什么，再判断它怎样随时间影响状态。') + '</div><div class="model-stage"><div class="model-context"><div class="chart-header"><strong>一天的真实上下文</strong><span class="chart-qualifier">CONCEPTUAL DAY</span></div>' + graphMarkup({mode:'day'}) + '<div class="model-context-note">课程、讨论与休息落在同一条时间线上</div></div><div class="model-explanation"><div class="model-explanation-head"><strong>从事件到状态</strong><span>先读懂，再建模</span></div><div class="lens-chain"><div><b>01</b><strong>发生了什么</strong><small>Context / Event</small></div><div><b>02</b><strong>实际经历了什么</strong><small>Realized Exposure</small></div><div><b>03</b><strong>这件事对个人意味着什么</strong><small>Personal Appraisal</small></div><div><b>04</b><strong>形成压力或恢复输入</strong><small>Demand / Pressure / Recovery</small></div><div><b>05</b><strong>随时间累积与回落</strong><small>Temporal Dynamics</small></div><div class="lens-result"><b>→</b><strong>当前压力状态　S(t)</strong></div></div><div class="model-route"><article class="model-route-card project-route"><b class="route-title">14:00 · 项目讨论</b><div class="route-steps"><span>发生讨论</span><i>→</i><span>实际参加</span><i>→</i><span>结合个人评价</span><i>→</i><strong>需求与压力</strong></div></article><article class="model-route-card recovery-route"><b class="route-title">12:00 · 午饭 / 午休</b><div class="route-steps"><span>安排休息</span><i>→</i><span>确实休息</span><i>→</i><span>结合个人评价</span><i>→</i><strong>恢复输入</strong></div></article></div></div></div></section>';
+    return '<section class="scene scene-mental scene-model"><div class="mental-heading">' + sceneHead('02 — BUILDING / MODEL LENS','日程不会<em>直接变成压力。</em>','系统先理解发生了什么、这件事对这个人意味着什么，再判断它怎样随时间影响状态。') + '</div><div class="model-stage">' +
+      '<div class="model-explanation"><div class="model-explanation-head"><strong>从事件到状态</strong><span>先读懂，再建模</span></div><div class="lens-chain"><div><b>01</b><strong>发生了什么</strong><small>Context / Event</small></div><div><b>02</b><strong>实际经历了什么</strong><small>Realized Exposure</small></div><div><b>03</b><strong>这件事对个人意味着什么</strong><small>Personal Appraisal</small></div><div><b>04</b><strong>形成压力或恢复输入</strong><small>Demand / Pressure / Recovery</small></div><div><b>05</b><strong>随时间累积与回落</strong><small>Temporal Dynamics</small></div><div class="lens-result"><b>→</b><strong>当前压力状态　S(t)</strong></div></div><div class="model-route"><article class="model-route-card project-route"><b class="route-title">14:00 · 项目讨论</b><div class="route-steps"><span>发生讨论</span><i>→</i><span>实际参加</span><i>→</i><span>结合个人评价</span><i>→</i><strong>需求与压力</strong></div></article><article class="model-route-card recovery-route"><b class="route-title">12:00 · 午饭 / 午休</b><div class="route-steps"><span>安排休息</span><i>→</i><span>确实休息</span><i>→</i><span>结合个人评价</span><i>→</i><strong>恢复输入</strong></div></article></div></div>' +
+      '<div class="model-context"><div class="chart-header"><strong>一天的真实上下文</strong><span class="chart-qualifier">CONCEPTUAL DAY</span></div>' + graphMarkup({mode:'day'}) + '<div class="model-context-note">课程、讨论与休息落在同一条时间线上</div></div></div></section>';
   }
   function profileMarkup(which) {
     const a = which === 'a';
@@ -382,6 +392,7 @@
     { id:'knowledge', chapter:'LEARNING', render:sceneKnowledge },
     { id:'learning-system', chapter:'LEARNING', render:sceneLearningSystem },
     { id:'competitions', chapter:'LEARNING', render:sceneAwards },
+    { id:'fireeye-project', chapter:'LEARNING', render:sceneFireEyeProject },
     { id:'bridge', chapter:'BUILDING', render:sceneBridge },
     { id:'mental-day', chapter:'BUILDING', render:sceneMentalDay },
     { id:'mental-model', chapter:'BUILDING', render:sceneModel },
